@@ -21,11 +21,13 @@ use App\Http\Controllers\Admin\EscortsController;
 //     return view('welcome');
 // });
 
-Route::get('/admin', [AdminAuthController::class, 'index'])->name('admin.login');
+// Route::get('/admin', [AdminAuthController::class, 'index'])->name('admin.login');
+Route::get('/', [AdminAuthController::class, 'index'])->name('admin.login');
 Route::post('/admin/custom/login', [AdminAuthController::class, 'customLogin'])->name('login.custom');
 Route::get('/admin/signout', [AdminAuthController::class, 'signOut'])->name('signout');
 
-Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
+// Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
+Route::group(['middleware' => ['admin']], function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
     Route::get('/profile', [HomeController::class, 'profile'])->name('admin.profile');
     Route::post('/profile/update', [HomeController::class, 'profileUpdate'])->name('admin.profile.update');

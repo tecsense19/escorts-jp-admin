@@ -30,7 +30,8 @@ class User extends Authenticatable
         'profile_pic',
         'user_role',
         'age',
-        'hourly_price'
+        'hourly_price',
+        'mobile_otp'
     ];
 
     /**
@@ -52,4 +53,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function escortImages()
+    {
+        return $this->hasMany(ProfileImages::class, 'user_id', 'id')->where('type', '=', 'image');
+    }
+
+    public function escortVideos()
+    {
+        return $this->hasMany(ProfileImages::class, 'user_id', 'id')->where('type', '=', 'video');
+    }
 }

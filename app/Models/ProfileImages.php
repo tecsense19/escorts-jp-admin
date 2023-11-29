@@ -16,4 +16,11 @@ class ProfileImages extends Model
         'file_path',
         'type'
     ];
+
+    // Accessor for the file_path attribute
+    public function getFilePathAttribute($value)
+    {
+        // You can modify the image path or add any logic before returning it
+        return $value ? url('/') . '/' . $value : ''; // Modify the path as needed
+    }
 }

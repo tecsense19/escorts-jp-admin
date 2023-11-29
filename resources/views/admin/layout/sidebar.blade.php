@@ -8,17 +8,17 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
+            <a class="nav-link {{ request()->is('escorts/create') || request()->is('escorts/show') ? '' : 'collapsed' }} " data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#" aria-expanded="{{ request()->is('escorts/create') || request()->is('escorts/show') ? 'true' : 'false' }}">
             <i class="bi bi-person"></i><span>Escorts</span><i class="bi bi-chevron-down ms-auto"></i>
             </a>
-            <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <ul id="tables-nav" class="nav-content collapse {{ request()->is('escorts/create') || request()->is('escorts/show') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
                 <li>
-                    <a href="{{ route('admin.show.escorts') }}">
+                    <a href="{{ route('admin.show.escorts') }}" class="{{ request()->is('escorts/show') ? 'active' : '' }}">
                     <i class="bi bi-circle"></i><span>All Escorts</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.create.escorts') }}">
+                    <a href="{{ route('admin.create.escorts') }}" class="{{ request()->is('escorts/create') ? 'active' : '' }}">
                     <i class="bi bi-circle"></i><span>New Escorts</span>
                     </a>
                 </li>

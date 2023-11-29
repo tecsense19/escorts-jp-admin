@@ -18,6 +18,6 @@ class Admin
         if(isset(auth()->user()->user_role) && auth()->user()->user_role == 'admin'){
             return $next($request);
         }
-        return redirect('/admin')->with('error','You have not admin access. Please login as admin.');
+        return redirect('/')->with('error','You have not admin access. Please login as admin.');
     }
 }

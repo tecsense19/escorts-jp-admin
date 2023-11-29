@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,4 +17,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::post('/v1/sent/otp', [HomeController::class, 'sentOtp']);
+Route::post('/v1/verify/otp', [HomeController::class, 'verifyOtp']);
+
+Route::group(['prefix' => 'v1'], function () {
+    Route::get('/escorts/list', [HomeController::class, 'escortsList']);
 });
