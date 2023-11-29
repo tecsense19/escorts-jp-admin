@@ -40,3 +40,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
     Route::post('/state/list', [HomeController::class, 'stateList'])->name('admin.state.list');
     Route::post('/city/list', [HomeController::class, 'cityList'])->name('admin.city.list');
 });
+
+Route::get('/clear-cache', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
+    Artisan::call('config:clear');
+
+    return "Cache cleared successfully";
+});
