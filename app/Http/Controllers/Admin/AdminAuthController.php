@@ -32,7 +32,7 @@ class AdminAuthController extends Controller
             return redirect()->route('admin.dashboard');
         }
   
-        return redirect("admin")->withError('Login details are not valid');
+        return redirect("/")->withError('Login details are not valid');
     }
     
     public function signOut() {

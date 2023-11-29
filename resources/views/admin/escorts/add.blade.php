@@ -46,7 +46,7 @@
     .remove-image {
         position: absolute;
         top: 5px;
-        right: 5px;
+        right: 20px;
         cursor: pointer;
         background-color: #e74c3c;
         color: #fff;
@@ -355,7 +355,7 @@
 
                 var reader = new FileReader();
                 reader.onload = function (e) {
-                    var preview = '<div class="col-sm-3 image-preview"><img src="' + e.target.result + '" alt="Image Preview" style="">';
+                    var preview = '<div class="col-sm-3 image-preview"><img src="' + e.target.result + '" alt="Image Preview" style="width: 100%;">';
                     preview += '<button class="remove-image" data-index="' + i + '">Remove</button></div>';
                     $('#preview-container').append(preview);
                 };

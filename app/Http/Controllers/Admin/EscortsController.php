@@ -110,7 +110,7 @@ class EscortsController extends Controller
                 }
             }
 
-            return redirect()->back()->withSuccess('Profile created successfully.');
+            return redirect()->route('admin.show.escorts')->withSuccess('Profile created successfully.');
 
         } catch (\Exception $e) {
             return redirect()->back()->withError($e->getMessage());

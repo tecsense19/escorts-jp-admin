@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API\V1;
+
 use App\Models\User;
 use App\Models\ProfileImages;
 use Illuminate\Http\Request;
