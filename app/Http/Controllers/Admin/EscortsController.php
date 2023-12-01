@@ -287,7 +287,7 @@ class EscortsController extends Controller
 
         User::where('id', $userId)->delete();
 
-        return response()->json(['success' => true, 'message' => 'Escorts profile delete successfully.']);
+        return response()->json(['success' => true, 'message' => 'Escorts profile deleted successfully.']);
     }
 
     public function calendarEvent($userId)

@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\User;
 use App\Models\ProfileImages;
-use Illuminate\Http\Request;
-use App\Models\DedicatedExperts;
+use App\Models\EscortsAvailability;
+use App\Models\EscortsBookings;
+use App\Models\BookingSlot;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Api\BaseController as BaseController;
 use Validator;
@@ -95,16 +97,97 @@ class HomeController extends BaseController
         }
     }
 
+    public function getDateWiseAvailability(Request $request)
+    {
+        try {
+            $input = $request->all();
+
+            $validator = Validator::make($input, [
+                'escort_id' => 'required',
+                'selected_date' => 'required|date_format:Y-m-d',
+            ]);
+        
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->first());
+            }
+
+            $escort_id = $input['escort_id'];
+            $selected_date = date('Y-m-d', strtotime($input['selected_date']));
+
+            $getBookedSlot = BookingSlot::where('escort_id', $escort_id)->where('booking_date', date('Y-m-d', strtotime($input['selected_date'])))->pluck('booking_time')->toArray();
+
+            $getAvailability = EscortsAvailability::where('user_id', $escort_id)->where('available_date', $selected_date)->whereNotIn('available_time', $getBookedSlot)->get();
+            
+            return $this->sendResponse($getAvailability, 'Escorts are available for the selected date.');
+
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
     public function escortsBooking(Request $request)
     {
         try {
             $input = $request->all();
 
-            echo "<pre>";
-            print_r($input);
-            die;
+            $validator = Validator::make($input, [
+                'escort_id' => 'required|numeric',
+                'user_id' => 'required|numeric',
+                'hotel_name' => 'required|string',
+                'room_number' => 'required|string',
+                'selected_word' => 'required|string',
+                'booking_date' => 'required|date_format:Y-m-d',
+                'slot_ids' => 'required|string'
+            ]);
 
-            return $this->sendResponse($getEscortsList, 'Escorts list get successfully.');
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->first());
+            }
+
+            $checkEscorts = User::where('id', $input['escort_id'])->where('user_role', 'escorts')->first();
+            if($checkEscorts)
+            {
+                $checkUser = User::where('id', $input['escort_id'])->where('user_role', 'escorts')->first();
+                if($checkUser)
+                {
+                    $bookingArr = [];
+                    $bookingArr['escort_id'] = $input['escort_id'];
+                    $bookingArr['user_id'] = $input['user_id'];
+                    $bookingArr['hotel_name'] = $input['hotel_name'];
+                    $bookingArr['room_number'] = $input['room_number'];
+                    $bookingArr['selected_word'] = $input['selected_word'];
+                    $bookingArr['hourly_price'] = $checkEscorts->hourly_price;
+                    $bookingArr['booking_price'] = ($checkEscorts->hourly_price * count(explode(',', $input['slot_ids'])));
+        
+                    $lastBooking = EscortsBookings::create($bookingArr);
+        
+                    $getSlot = EscortsAvailability::where('user_id', $input['escort_id'])
+                                                    ->where('available_date', $input['booking_date'])
+                                                    ->whereIn('id', explode(',', $input['slot_ids']))
+                                                    ->get();
+        
+                    foreach ($getSlot as $key => $value) 
+                    {
+                        $bookSlot = [];
+                        $bookSlot['escort_id'] = $input['escort_id'];
+                        $bookSlot['booking_id'] = $lastBooking->id;
+                        $bookSlot['booking_date'] = $input['booking_date'];
+                        $bookSlot['booking_time'] = date('H:i:s', strtotime($value['available_time']));
+        
+                        BookingSlot::create($bookSlot);
+                    }
+        
+                    return $this->sendResponse($lastBooking, 'Escorts booking confirmed successfully.');
+                }
+                else
+                {
+                    return $this->sendError('Invalid user id.');
+                }
+            }
+            else
+            {
+                return $this->sendError('Invalid escort id.');
+            }
 
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
