@@ -667,7 +667,16 @@
                 {
                     if(response.success)
                     {
-                        event_data = JSON.parse(response.data);
+                        eventData = JSON.parse(response.data);
+                        
+                        if(eventData.length == undefined && eventData.events.length > 0)
+                        {
+                            event_data = JSON.parse(response.data);
+                        }
+                        else
+                        {
+                            event_data = {"events":[]};
+                        }
 
                         var date = new Date();
                         var today = date.getDate();
