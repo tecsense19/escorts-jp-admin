@@ -24,8 +24,6 @@ class AdminAuthController extends Controller
             'email' => 'required',
             'password' => 'required',
         ]);
-
-        // Hash::make($data['password'])
    
         $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials)) {
