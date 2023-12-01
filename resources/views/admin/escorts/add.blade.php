@@ -140,7 +140,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row mb-3">
+                                <!-- <div class="row mb-3">
                                     <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Videos</label>
                                     <div class="col-md-8 col-lg-9">
                                         <div id="video-preview-container">
@@ -163,7 +163,7 @@
                                             @endif
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="row mb-3">
                                     <label for="full_name" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
                                     <div class="col-md-8 col-lg-9">
@@ -213,12 +213,12 @@
                                         <label id="city-error" class="error" for="city"></label>
                                     </div>
                                 </div>
-                                <div class="row mb-3">
+                                <!-- <div class="row mb-3">
                                     <label for="address" class="col-md-4 col-lg-3 col-form-label">Address</label>
                                     <div class="col-md-8 col-lg-9">
                                         <input name="address" type="text" class="form-control" id="address" value="{{ $address }}">
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="row mb-3">
                                     <label for="mobile_no" class="col-md-4 col-lg-3 col-form-label">Mobile</label>
                                     <div class="col-md-8 col-lg-9">
