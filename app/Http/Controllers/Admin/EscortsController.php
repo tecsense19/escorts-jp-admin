@@ -329,9 +329,15 @@ class EscortsController extends Controller
             $explodeSlot = explode(',', $availableSlot);
         }
 
+        $timeArr = [];
+        for ($i=0; $i < count($explodeSlot); $i++) 
+        {
+            $timeArr[] = date('H:i:s', strtotime($explodeSlot[$i]));
+        }
+
         EscortsAvailability::where('user_id', $userId)
                             ->where('available_date', $availableDate)
-                            ->whereNotIn('available_time', $explodeSlot)
+                            ->whereNotIn('available_time', $timeArr)
                             ->delete();
 
         for ($i=0; $i < count($explodeSlot); $i++) 
@@ -343,14 +349,14 @@ class EscortsController extends Controller
 
             $checkAvailable = EscortsAvailability::where('user_id', $userId)
                                                 ->where('available_date', $availableDate)
-                                                ->where('available_time', date('H:i', strtotime($explodeSlot[$i])))
+                                                ->where('available_time', date('H:i:s', strtotime($explodeSlot[$i])))
                                                 ->first();
             
             if($checkAvailable)
             {
                 EscortsAvailability::where('user_id', $userId)
                                     ->where('available_date', $availableDate)
-                                    ->where('available_time', date('H:i', strtotime($explodeSlot[$i])))
+                                    ->where('available_time', date('H:i:s', strtotime($explodeSlot[$i])))
                                     ->update($availableArr);
             }
             else
