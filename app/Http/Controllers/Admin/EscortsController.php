@@ -292,26 +292,6 @@ class EscortsController extends Controller
 
     public function calendarEvent($userId)
     {
-        // $userId = Crypt::decryptString($userId);
-
-        // $availableList = EscortsAvailability::where('user_id', $userId)->get();
-
-        // $responseArr = [];
-        // foreach ($availableList as $key => $value) {
-        //     $event = [
-        //         'occasion' => '',
-        //         'invited_count' => date('h:i A', strtotime($value['available_time'])),
-        //         'year' => (int)date('Y', strtotime($value['available_date'])),
-        //         'month' => (int)date('m', strtotime($value['available_date'])),
-        //         'day' => (int)date('d', strtotime($value['available_date'])),
-        //         'cancelled' => false,
-        //     ];
-        
-        //     $responseArr['events'][] = $event;
-        // }
-
-        // $availabilityArr = count($responseArr) > 0 ? $responseArr : new \StdClass();
-
         return view('admin.escorts.calendar', compact('userId'));
     }
 
