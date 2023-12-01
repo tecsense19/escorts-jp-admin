@@ -19,7 +19,7 @@ class HomeController extends BaseController
             $input = $request->all();
 
             $validator = Validator::make($input, [
-                'mobile_no' => 'required|numeric|unique:users,mobile_no'
+                'mobile_no' => 'required|numeric'
             ]);
         
             if ($validator->fails()) {
@@ -31,7 +31,18 @@ class HomeController extends BaseController
             $userArr['user_role'] = 'client';
             $userArr['mobile_otp'] = 123456;
 
-            $userDetails = User::create($userArr);
+            $checkUser = User::where('mobile_no', $input['mobile_no'])->first();
+            $lastId = $input['mobile_no'];
+            if($checkUser)
+            {
+                User::where('mobile_no', $input['mobile_no'])->update($userArr);
+            }
+            else
+            {
+                User::create($userArr);
+            }
+
+            $userDetails = User::where('mobile_no', $input['mobile_no'])->first();
 
             return $this->sendResponse($userDetails, 'Escorts list get successfully.');
 
@@ -76,6 +87,22 @@ class HomeController extends BaseController
             $input = $request->all();
 
             $getEscortsList = User::with('escortImages')->with('escortVideos')->where('user_role', 'escorts')->get();
+
+            return $this->sendResponse($getEscortsList, 'Escorts list get successfully.');
+
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    public function escortsBooking(Request $request)
+    {
+        try {
+            $input = $request->all();
+
+            echo "<pre>";
+            print_r($input);
+            die;
 
             return $this->sendResponse($getEscortsList, 'Escorts list get successfully.');
 

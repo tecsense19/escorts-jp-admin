@@ -7,6 +7,7 @@ use App\Models\Countries;
 use App\Models\States;
 use App\Models\Cities;
 use App\Models\ProfileImages;
+use App\Models\EscortsAvailability;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -38,29 +39,81 @@ class EscortsController extends Controller
         try {
             $input = $request->all();
 
-            $rules = [
-                'full_name' => 'required|string',
-                'mobile_no' => 'required|numeric|unique:users,mobile_no,' . $input['user_id'], // 'unique' rule with 'ignore' constraint
-                'country' => 'required|string',
-            ];
-            
-            $messages = [
-                'mobile_no.numeric' => 'The mobile number must contain only numeric characters.',
-                'mobile_no.unique' => 'The mobile number has already been taken.',
-            ];
+            if($input['user_id'])
+            {
+                $rules = [
+                    'full_name' => 'required|string',
+                    'email' => 'required|unique:users,email,' . $input['user_id'],
+                    'mobile_no' => 'required|numeric|unique:users,mobile_no,' . $input['user_id'], // 'unique' rule with 'ignore' constraint
+                ];
+                
+                $messages = [
+                    'mobile_no.numeric' => 'The mobile number must contain only numeric characters.',
+                    'mobile_no.unique' => 'The mobile number has already been taken.',
+                ];
+    
+                $validator = Validator::make($input, $rules, $messages);
+    
+                if ($validator->fails()) {
+                    // Validation failed, handle errors as needed
+                    return redirect()->back()->withError($validator->errors()->first())->withInput($request->all());
+                }
+            }
+            else
+            {
+                $rules = [
+                    'full_name' => 'required|string',
+                    'email' => 'required|unique:users,email',
+                    'mobile_no' => 'required|numeric|unique:users,mobile_no', // 'unique' rule with 'ignore' constraint
+                ];
+                
+                $messages = [
+                    'mobile_no.numeric' => 'The mobile number must contain only numeric characters.',
+                    'mobile_no.unique' => 'The mobile number has already been taken.',
+                ];
+    
+                $validator = Validator::make($input, $rules, $messages);
+    
+                if ($validator->fails()) {
+                    // Validation failed, handle errors as needed
+                    return redirect()->back()->withError($validator->errors()->first())->withInput($request->all());
+                }
+            }
 
-            $validator = Validator::make($input, $rules, $messages);
+            if(isset($input['remove_img_ids']))
+            {
+                $getImages = ProfileImages::whereIn('id', explode(',', $input['remove_img_ids']))->where('type', 'image')->get();
+                foreach ($getImages as $key => $value) 
+                {
+                    $proFilePath = $value->file_path;
+                    $proPath = substr(strstr($proFilePath, 'public/'), strlen('public/'));
 
-            if ($validator->fails()) {
-                // Validation failed, handle errors as needed
-                return redirect()->back()->withError($validator->errors()->first())->withInput($request->all());
+                    if (file_exists(public_path($proPath))) {
+                        \File::delete(public_path($proPath));
+                    }
+                }
+
+                ProfileImages::whereIn('id', explode(',', $input['remove_img_ids']))->where('type', 'image')->delete();   
+            }
+            if(isset($input['remove_video_ids']))
+            {
+                $getVideos = ProfileImages::whereIn('id', explode(',', $input['remove_video_ids']))->where('type', 'video')->get();
+                foreach ($getVideos as $key => $value) 
+                {
+                    $proFilePath = $value->file_path;
+                    $proPath = substr(strstr($proFilePath, 'public/'), strlen('public/'));
+
+                    if (file_exists(public_path($proPath))) {
+                        \File::delete(public_path($proPath));
+                    }
+                }
+
+                ProfileImages::whereIn('id', explode(',', $input['remove_video_ids']))->where('type', 'video')->delete();
             }
 
             $userData = [];
             $userData['name'] = isset($input['full_name']) ? $input['full_name'] : '';
-            $userData['password'] = Hash::make(Str::random(8));
             $userData['description'] = isset($input['about']) ? $input['about'] : '';
-            $userData['user_role'] = 'escorts';
             $userData['age'] = isset($input['age']) ? $input['age'] : '';
             $userData['country'] = isset($input['country']) ? $input['country'] : '';
             $userData['state'] = isset($input['state']) ? $input['state'] : '';
@@ -70,7 +123,25 @@ class EscortsController extends Controller
             $userData['email'] = isset($input['email']) ? $input['email'] : '';
             $userData['hourly_price'] = isset($input['hourly_price']) ? $input['hourly_price'] : '';
 
-            $lastUser = User::create($userData);
+            $userId = '';
+            $message = '';
+            if($input['user_id'])
+            {
+                User::where('id', $input['user_id'])->update($userData);
+                $userId = $input['user_id'];
+                $message = 'Profile updated successfully.';
+            }
+            else
+            {
+                $userData['password'] = Hash::make(Str::random(8));
+                $userData['user_role'] = 'escorts';
+                
+                $lastUser = User::create($userData);
+
+                $userId = $lastUser->id;
+
+                $message = 'Profile created successfully.';
+            }
 
             if ($files = $request->file('image_upload')) {
             
@@ -83,7 +154,7 @@ class EscortsController extends Controller
                     $img = 'public/uploads/escorts_profile/' . $filename;
             
                     $imgData = [];
-                    $imgData['user_id'] = $lastUser->id;
+                    $imgData['user_id'] = $userId;
                     $imgData['type'] = 'image';
                     $imgData['file_path'] = $img;
 
@@ -102,7 +173,7 @@ class EscortsController extends Controller
                     $img = 'public/uploads/escorts_video/' . $filename;
             
                     $videoData = [];
-                    $videoData['user_id'] = $lastUser->id;
+                    $videoData['user_id'] = $userId;
                     $videoData['type'] = 'video';
                     $videoData['file_path'] = $img;
 
@@ -110,7 +181,7 @@ class EscortsController extends Controller
                 }
             }
 
-            return redirect()->route('admin.show.escorts')->withSuccess('Profile created successfully.');
+            return redirect()->route('admin.show.escorts')->withSuccess($message);
 
         } catch (\Exception $e) {
             return redirect()->back()->withError($e->getMessage());
@@ -162,6 +233,16 @@ class EscortsController extends Controller
         return view('admin.escorts.list', compact('escortsList'));
     }
 
+    public function edit($userId)
+    {
+        $userId = Crypt::decryptString($userId);
+        
+        $getUserDetails = User::where('id', $userId)->with('escortImages')->with('escortVideos')->first();
+
+        $countryData = Countries::get();
+        return view('admin.escorts.add', compact('countryData', 'getUserDetails'));
+    }
+
     public function deleteEscorts(Request $request)
     {
         $input = $request->all();
@@ -207,5 +288,101 @@ class EscortsController extends Controller
         User::where('id', $userId)->delete();
 
         return response()->json(['success' => true, 'message' => 'Escorts profile delete successfully.']);
+    }
+
+    public function calendarEvent($userId)
+    {
+        // $userId = Crypt::decryptString($userId);
+
+        // $availableList = EscortsAvailability::where('user_id', $userId)->get();
+
+        // $responseArr = [];
+        // foreach ($availableList as $key => $value) {
+        //     $event = [
+        //         'occasion' => '',
+        //         'invited_count' => date('h:i A', strtotime($value['available_time'])),
+        //         'year' => (int)date('Y', strtotime($value['available_date'])),
+        //         'month' => (int)date('m', strtotime($value['available_date'])),
+        //         'day' => (int)date('d', strtotime($value['available_date'])),
+        //         'cancelled' => false,
+        //     ];
+        
+        //     $responseArr['events'][] = $event;
+        // }
+
+        // $availabilityArr = count($responseArr) > 0 ? $responseArr : new \StdClass();
+
+        return view('admin.escorts.calendar', compact('userId'));
+    }
+
+    public function availabilityAdd(Request $request)
+    {
+        $input = $request->all();
+
+        $availableDate = date('Y-m-d', strtotime($input['date']));
+        $availableSlot = $input['available_slot'];
+        $userId = Crypt::decryptString($input['user_id']);
+
+        $explodeSlot = [];
+        if($availableSlot)
+        {
+            $explodeSlot = explode(',', $availableSlot);
+        }
+
+        EscortsAvailability::where('user_id', $userId)
+                            ->where('available_date', $availableDate)
+                            ->whereNotIn('available_time', $explodeSlot)
+                            ->delete();
+
+        for ($i=0; $i < count($explodeSlot); $i++) 
+        {
+            $availableArr = [];
+            $availableArr['user_id'] = $userId;
+            $availableArr['available_date'] = $availableDate;
+            $availableArr['available_time'] = date('H:i', strtotime($explodeSlot[$i]));
+
+            $checkAvailable = EscortsAvailability::where('user_id', $userId)
+                                                ->where('available_date', $availableDate)
+                                                ->where('available_time', date('H:i', strtotime($explodeSlot[$i])))
+                                                ->first();
+            
+            if($checkAvailable)
+            {
+                EscortsAvailability::where('user_id', $userId)
+                                    ->where('available_date', $availableDate)
+                                    ->where('available_time', date('H:i', strtotime($explodeSlot[$i])))
+                                    ->update($availableArr);
+            }
+            else
+            {
+                EscortsAvailability::create($availableArr);
+            }
+        }
+        return response()->json(['success' => true, 'message' => 'Escorts availability created successfully.']);
+    }
+
+    public function availabilityList(Request $request)
+    {
+        $input = $request->all();
+
+        $userId = Crypt::decryptString($input['user_id']);
+
+        $availableList = EscortsAvailability::where('user_id', $userId)->where('available_date', '>=', date('Y-m-d'))->get();
+
+        $responseArr = [];
+        foreach ($availableList as $key => $value) {
+            $event = [
+                'occasion' => '',
+                'invited_count' => date('h:i A', strtotime($value['available_time'])),
+                'year' => (int)date('Y', strtotime($value['available_date'])),
+                'month' => (int)date('m', strtotime($value['available_date'])),
+                'day' => (int)date('d', strtotime($value['available_date'])),
+                'cancelled' => false,
+            ];
+        
+            $responseArr['events'][] = $event;
+        }
+
+        return response()->json(['success' => true, 'data' => json_encode($responseArr), 'message' => 'Escorts availability list successfully.']);
     }
 }

@@ -5,14 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Countries extends Model
+class EscortsAvailability extends Model
 {
     use HasFactory;
 
-    protected $table = 'countries';
+    protected $table = 'escorts_availability';
 
     protected $fillable = [
-        'sortname',
-        'name'
+        'user_id',
+        'available_date',
+        'available_time'
     ];
 }

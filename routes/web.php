@@ -34,10 +34,16 @@ Route::group(['middleware' => ['admin']], function () {
     Route::post('/update/password', [HomeController::class, 'updatePassword'])->name('admin.update.password');
 
     Route::get('/escorts/create', [EscortsController::class, 'create'])->name('admin.create.escorts');
+    Route::get('/escorts/edit/{user_id}', [EscortsController::class, 'edit'])->name('admin.edit.escorts');
     Route::post('/escorts/save', [EscortsController::class, 'saveEscorts'])->name('admin.save.escorts');
     Route::get('/escorts/show', [EscortsController::class, 'showEscorts'])->name('admin.show.escorts');
     Route::post('/escorts/list', [EscortsController::class, 'listEscorts'])->name('admin.escorts.list');
     Route::post('/escorts/delete', [EscortsController::class, 'deleteEscorts'])->name('admin.escorts.delete');
+
+    Route::get('/calendar/event/{user_id}', [EscortsController::class, 'calendarEvent'])->name('admin.calendar.event');
+
+    Route::post('/escorts/availability/add', [EscortsController::class, 'availabilityAdd'])->name('admin.escorts.availability.add');
+    Route::post('/escorts/availability/list', [EscortsController::class, 'availabilityList'])->name('admin.escorts.availability.list');
     
     Route::post('/state/list', [HomeController::class, 'stateList'])->name('admin.state.list');
     Route::post('/city/list', [HomeController::class, 'cityList'])->name('admin.city.list');

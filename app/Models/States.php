@@ -9,7 +9,7 @@ class States extends Model
 {
     use HasFactory;
 
-    protected $tableName = 'states';
+    protected $table = 'states';
 
     protected $fillable = [
         'name',

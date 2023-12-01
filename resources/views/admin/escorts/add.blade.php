@@ -1,16 +1,15 @@
 @php
-    $profilePic = Auth::user()->profile_pic ? url('/').'/'.Auth::user()->profile_pic : url('/').'/public/assets/img/profile-img.jpg';
-    $full_name = old('full_name');
-    $about = old('about');
-    $user_role = old('user_role');
-    $age = old('age');
-    $country = old('country');
-    $state = old('state');
-    $city = old('city');
-    $address = old('address');
-    $mobile_no = old('mobile_no');
-    $email = old('email');
-    $hourly_price = old('hourly_price');
+    $user_id = isset($getUserDetails) ? $getUserDetails->id : '';
+    $full_name = isset($getUserDetails) ? $getUserDetails->name : old('full_name');
+    $about = isset($getUserDetails) ? $getUserDetails->description : old('about');
+    $age = isset($getUserDetails) ? $getUserDetails->age : old('age');
+    $country = isset($getUserDetails) ? $getUserDetails->country : old('country');
+    $state = isset($getUserDetails) ? $getUserDetails->state : old('state');
+    $city = isset($getUserDetails) ? $getUserDetails->city : old('city');
+    $address = isset($getUserDetails) ? $getUserDetails->address : old('address');
+    $mobile_no = isset($getUserDetails) ? $getUserDetails->mobile_no : old('mobile_no');
+    $email = isset($getUserDetails) ? $getUserDetails->email : old('email');
+    $hourly_price = isset($getUserDetails) ? $getUserDetails->hourly_price : old('hourly_price');
 @endphp
 @include('admin.layout.front')
 @include('admin.layout.header')
@@ -53,6 +52,8 @@
         border: none;
         padding: 5px;
         border-radius: 50%;
+        color: white;
+        width: 27px;
     }
 
     #video-preview-container {
@@ -77,21 +78,24 @@
     }
 
     .video-preview {
-        margin: 10px;
+        /* margin: 10px; */
         position: relative;
+        margin-top: 10px;
     }
 
     .remove-video {
         position: absolute;
         top: 5px;
-        right: 22px;
+        right: 20px;
         cursor: pointer;
         background-color: #e74c3c;
         color: #fff;
         border: none;
         padding: 5px;
         border-radius: 50%;
-        font-size: 12px;
+        color: white;
+        width: 27px;
+        font-size: 11px;
     }
 </style>
 <main id="main" class="main">
@@ -121,9 +125,19 @@
                                         <div id="image-preview-container">
                                             <label for="image-upload" id="image-label">Choose Images</label>
                                             <input type="file" name="image_upload[]" id="image-upload" accept="image/*" multiple style="display: none;">
+                                            <input type="hidden" name="remove_img_ids" id="remove_img_ids" />
                                         </div>
 
-                                        <div class="row" id="preview-container"></div>
+                                        <div class="row" id="preview-container">
+                                            @if(isset($getUserDetails->escortImages))
+                                                @foreach($getUserDetails->escortImages as $key => $value)
+                                                    <div class="col-sm-3 image-preview">
+                                                        <img src="{{ $value->file_path }}" alt="Image Preview" style="width: 100%;">
+                                                        <button class="remove-image" data-index="{{ $key }}" data-id="{{ $value->id }}"><i class="bi bi-trash"></i></button>
+                                                    </div>
+                                                @endforeach
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -132,16 +146,29 @@
                                         <div id="video-preview-container">
                                             <label for="video-upload" id="video-label">Choose Videos</label>
                                             <input type="file" name="video_upload[]" id="video-upload" accept="video/*" multiple style="display: none;">
+                                            <input type="hidden" name="remove_video_ids" id="remove_video_ids" />
                                         </div>
 
-                                        <div class="row" id="vid-preview-container"></div>
+                                        <div class="row" id="vid-preview-container">
+                                            @if(isset($getUserDetails->escortVideos))
+                                                @foreach($getUserDetails->escortVideos as $key => $value)
+                                                    <div class="col-sm-3 video-preview">
+                                                        <video width="100%" height="100%" controls>
+                                                        <source src="{{ $value->file_path }}" type="">Your browser does not support the video tag.</video>
+                                                        <button class="remove-video" data-index="{{ $key }}" data-id="{{ $value->id }}">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                @endforeach
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="full_name" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
                                     <div class="col-md-8 col-lg-9">
                                         <input name="full_name" type="text" class="form-control" id="full_name" value="{{ $full_name }}" required>
-                                        <input type="hidden" name="user_id" id="user_id" value=""/>
+                                        <input type="hidden" name="user_id" id="user_id" value="{{ $user_id }}"/>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -162,7 +189,7 @@
                                         <select name="country" id="country" class="form-control">
                                             <option value="">Select Country</option>
                                             @foreach($countryData as $cou)
-                                                <option value="{{ $cou->id }}">{{ $cou->name }}</option>            
+                                                <option value="{{ $cou->id }}" @if($cou->id == $country) {{ 'selected' }} @endif >{{ $cou->name }}</option>            
                                             @endforeach
                                         </select>
                                         <label id="country-error" class="error" for="country"></label>
@@ -211,7 +238,7 @@
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    <button type="submit" class="btn btn-primary">{{ $user_id ? 'Update' : 'Create' }}</button>
                                 </div>
                             </form>
                             <!-- End Profile Edit Form -->
@@ -292,52 +319,26 @@
             }
         });
 
+        var countryId = '{{ $country }}';
+        var stateId = '{{ $state }}';
+        var cityId = '{{ $city }}';
+        if(countryId)
+        {
+            changeCountry(countryId, stateId)
+        }
+        if(stateId)
+        {
+            changeState(stateId, cityId)
+        }
+
         $('body').on('change', '#country', function(e) {            
             var selectedCountry = $(this).val();
-            $.ajax({
-                type:'post',
-                headers: {'X-CSRF-TOKEN': jQuery('input[name=_token]').val()},
-                url:'{{ route("admin.state.list") }}',
-                data: { country_id: selectedCountry },
-                success:function(response)
-                {
-                    if(response.success)
-                    {
-                        $('#state').html(response.states);
-                    }
-                    else
-                    {
-                        Swal.fire('Error!', 'Something went wrong.', 'error');    
-                    }
-                },
-                error: function(error) {
-                    Swal.fire('Error!', 'Something went wrong.', 'error');
-                }
-            });
+            changeCountry(selectedCountry, '')
         });
 
         $('body').on('change', '#state', function(e) {            
-            var selectedCountry = $(this).val();
-            $.ajax({
-                type:'post',
-                headers: {'X-CSRF-TOKEN': jQuery('input[name=_token]').val()},
-                url:'{{ route("admin.city.list") }}',
-                data: { state_id: selectedCountry },
-                success:function(response)
-                {
-                    if(response.success)
-                    {
-                        $('#city').html(response.cities);
-                    }
-                    else
-                    {
-                        Swal.fire('Error!', 'Something went wrong.', 'error');    
-                    }
-                },
-                error: function(error) {
-                    Swal.fire('Error!', 'Something went wrong.', 'error');
-                }
-            });
+            var selectedState = $(this).val();
+            changeState(selectedState, '')
         });
 
         $('#country, #state, #city').select2();
@@ -345,7 +346,7 @@
         $('#image-upload').on('change', function (e) {
             var files = e.target.files;
 
-            $('#preview-container').empty();
+            // $('#preview-container').empty();
 
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
@@ -356,7 +357,7 @@
                 var reader = new FileReader();
                 reader.onload = function (e) {
                     var preview = '<div class="col-sm-3 image-preview"><img src="' + e.target.result + '" alt="Image Preview" style="width: 100%;">';
-                    preview += '<button class="remove-image" data-index="' + i + '">Remove</button></div>';
+                    preview += '<button class="remove-image" data-index="' + i + '" data-id=""><i class="bi bi-trash"></i></button></div>';
                     $('#preview-container').append(preview);
                 };
 
@@ -367,6 +368,14 @@
         // Remove image on click
         $('#preview-container').on('click', '.remove-image', function () {
             var indexToRemove = $(this).data('index');
+            var idToRemove = $(this).data('id');
+            if(idToRemove)
+            {
+                var oldVal = $('#remove_img_ids').val();
+                oldVal = oldVal ? oldVal + ',' + idToRemove : idToRemove;
+                $('#remove_img_ids').val(oldVal);
+            }
+
             $(this).closest('.image-preview').remove();
             $('#image-upload')[0].files[indexToRemove] = null;
         });
@@ -374,7 +383,7 @@
         $('#video-upload').on('change', function (e) {
             var files = e.target.files;
 
-            $('#vid-preview-container').empty();
+            // $('#vid-preview-container').empty();
 
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
@@ -387,7 +396,7 @@
                     var preview = '<div class="col-sm-3 video-preview"><video width="100%" height="100%" controls>';
                     preview += '<source src="' + e.target.result + '" type="' + file.type + '">';
                     preview += 'Your browser does not support the video tag.</video>';
-                    preview += '<button class="remove-video" data-index="' + i + '">Remove</button></div>';
+                    preview += '<button class="remove-video" data-index="' + i + '" data-id=""><i class="bi bi-trash"></i></button></div>';
                     $('#vid-preview-container').append(preview);
                 };
 
@@ -398,9 +407,75 @@
         // Remove video on click
         $('#vid-preview-container').on('click', '.remove-video', function () {
             var indexToRemove = $(this).data('index');
+            var idToRemove = $(this).data('id');
+            if(idToRemove)
+            {
+                var oldVal = $('#remove_video_ids').val();
+                oldVal = oldVal ? oldVal + ',' + idToRemove : idToRemove;
+                $('#remove_video_ids').val(oldVal);
+            }
             $(this).closest('.video-preview').remove();
             $('#video-upload')[0].files[indexToRemove] = null;
         });
     });
+
+    function changeCountry(selectedCountry, stateId)
+    {
+        $.ajax({
+            type:'post',
+            headers: {'X-CSRF-TOKEN': jQuery('input[name=_token]').val()},
+            url:'{{ route("admin.state.list") }}',
+            data: { country_id: selectedCountry },
+            success:function(response)
+            {
+                if(response.success)
+                {
+                    $('#state').html(response.states);
+
+                    if(stateId)
+                    {
+                        $('#state option[value="'+stateId+'"]').attr('selected', 'selected');
+                    }
+                    // $('#state').val(stateId).trigger('change');
+                }
+                else
+                {
+                    Swal.fire('Error!', 'Something went wrong.', 'error');    
+                }
+            },
+            error: function(error) {
+                Swal.fire('Error!', 'Something went wrong.', 'error');
+            }
+        });
+    }
+
+    function changeState(selectedState, cityId)
+    {
+        $.ajax({
+            type:'post',
+            headers: {'X-CSRF-TOKEN': jQuery('input[name=_token]').val()},
+            url:'{{ route("admin.city.list") }}',
+            data: { state_id: selectedState },
+            success:function(response)
+            {
+                if(response.success)
+                {
+                    $('#city').html(response.cities);
+
+                    if(cityId)
+                    {
+                        $('#city option[value="'+cityId+'"]').attr('selected', 'selected');
+                    }
+                }
+                else
+                {
+                    Swal.fire('Error!', 'Something went wrong.', 'error');    
+                }
+            },
+            error: function(error) {
+                Swal.fire('Error!', 'Something went wrong.', 'error');
+            }
+        });
+    }
 </script>
 @include('admin.layout.end')

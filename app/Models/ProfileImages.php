@@ -9,7 +9,7 @@ class ProfileImages extends Model
 {
     use HasFactory;
 
-    protected $tableName = 'profile_images';
+    protected $table = 'profile_images';
 
     protected $fillable = [
         'user_id',
