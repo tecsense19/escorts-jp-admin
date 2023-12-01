@@ -2,18 +2,18 @@
 <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
         <li class="nav-item">
-            <a class="nav-link " href="index.html">
+            <a class="nav-link {{ request()->is('dashboard') ? '' : 'collapsed' }}" href="index.html">
             <i class="bi bi-grid"></i>
             <span>Dashboard</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->is('escorts/create') || request()->is('escorts/show') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') ? '' : 'collapsed' }} " data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#" aria-expanded="{{ request()->is('escorts/create') || request()->is('escorts/show') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') ? 'true' : 'false' }}">
+            <a class="nav-link {{ request()->is('escorts/create') || request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') ? '' : 'collapsed' }} " data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#" aria-expanded="{{ request()->is('escorts/create') || request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') ? 'true' : 'false' }}">
             <i class="bi bi-person"></i><span>Escorts</span><i class="bi bi-chevron-down ms-auto"></i>
             </a>
-            <ul id="tables-nav" class="nav-content collapse {{ request()->is('escorts/create') || request()->is('escorts/show') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
+            <ul id="tables-nav" class="nav-content collapse {{ request()->is('escorts/create') || request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
                 <li>
-                    <a href="{{ route('admin.show.escorts') }}" class="{{ request()->is('escorts/show') ? 'active' : '' }}">
+                    <a href="{{ route('admin.show.escorts') }}" class="{{ request()->is('escorts') ? 'active' : '' }}">
                     <i class="bi bi-circle"></i><span>All Escorts</span>
                     </a>
                 </li>
@@ -23,6 +23,12 @@
                     </a>
                 </li>
             </ul>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->is('bookings') ? '' : 'collapsed' }}" href="{{ route('admin.booking') }}">
+            <i class="bi bi-bag"></i>
+                <span>Bookings</span>
+            </a>
         </li>
         <!-- End Dashboard Nav -->
         <!-- <li class="nav-item">

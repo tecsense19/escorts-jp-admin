@@ -24,5 +24,6 @@ Route::post('/v1/verify/otp', [HomeController::class, 'verifyOtp']);
 
 Route::group(['prefix' => 'v1'], function () {
     Route::get('/escorts/list', [HomeController::class, 'escortsList']);
-    Route::get('/escorts/booking', [HomeController::class, 'escortsBooking']);
+    Route::post('/escorts/date/wise/availability', [HomeController::class, 'getDateWiseAvailability']);
+    Route::post('/escorts/booking', [HomeController::class, 'escortsBooking']);
 });

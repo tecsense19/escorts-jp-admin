@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\EscortsController;
+use App\Http\Controllers\Admin\BookingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,10 +34,10 @@ Route::group(['middleware' => ['admin']], function () {
     Route::post('/profile/update', [HomeController::class, 'profileUpdate'])->name('admin.profile.update');
     Route::post('/update/password', [HomeController::class, 'updatePassword'])->name('admin.update.password');
 
+    Route::get('/escorts', [EscortsController::class, 'showEscorts'])->name('admin.show.escorts');
     Route::get('/escorts/create', [EscortsController::class, 'create'])->name('admin.create.escorts');
     Route::get('/escorts/edit/{user_id}', [EscortsController::class, 'edit'])->name('admin.edit.escorts');
     Route::post('/escorts/save', [EscortsController::class, 'saveEscorts'])->name('admin.save.escorts');
-    Route::get('/escorts/show', [EscortsController::class, 'showEscorts'])->name('admin.show.escorts');
     Route::post('/escorts/list', [EscortsController::class, 'listEscorts'])->name('admin.escorts.list');
     Route::post('/escorts/delete', [EscortsController::class, 'deleteEscorts'])->name('admin.escorts.delete');
 
@@ -47,6 +48,10 @@ Route::group(['middleware' => ['admin']], function () {
     
     Route::post('/state/list', [HomeController::class, 'stateList'])->name('admin.state.list');
     Route::post('/city/list', [HomeController::class, 'cityList'])->name('admin.city.list');
+
+    Route::get('/bookings', [BookingController::class, 'index'])->name('admin.booking');
+    Route::post('/bookings/list', [BookingController::class, 'bookingList'])->name('admin.booking.list');
+    Route::post('/bookings/delete', [BookingController::class, 'bookingDelete'])->name('admin.booking.delete');
 });
 
 Route::get('/clear-cache', function () {
