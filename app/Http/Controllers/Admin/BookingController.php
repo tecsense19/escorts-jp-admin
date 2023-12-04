@@ -71,3 +71,4 @@ class BookingController extends Controller
         return response()->json(['success' => true, 'message' => 'Booking deleted successfully.']);
     }
 }
+

@@ -322,3 +322,4 @@ class EscortsController extends Controller
         return response()->json(['success' => true, 'data' => json_encode($responseArr), 'message' => 'Escorts availability list successfully.']);
     }
 }
+
