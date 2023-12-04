@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\HomeController;
+use App\Http\Controllers\Api\V1\EscortsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,14 @@ Route::post('/v1/verify/otp', [HomeController::class, 'verifyOtp']);
 
 Route::group(['prefix' => 'v1'], function () {
     Route::get('/escorts/list', [HomeController::class, 'escortsList']);
+    Route::post('/country/list', [HomeController::class, 'countryList']);
+    Route::post('/state/list', [HomeController::class, 'stateList']);
+    Route::post('/city/list', [HomeController::class, 'cityList']);
     Route::post('/escorts/date/wise/availability', [HomeController::class, 'getDateWiseAvailability']);
     Route::post('/escorts/booking', [HomeController::class, 'escortsBooking']);
+
+    Route::post('/register', [EscortsController::class, 'register']);
+    Route::post('/escort/login', [EscortsController::class, 'login']);
+    Route::post('/escort/profile', [EscortsController::class, 'getEscortProfile']);
+    Route::post('/escort/availability/add', [EscortsController::class, 'escortAvailabilityAdd']);
 });

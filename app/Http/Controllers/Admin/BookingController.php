@@ -34,7 +34,29 @@ class BookingController extends Controller
     {
         $input = $request->all();
 
-        $getBookingList = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])->paginate(15);
+        $getBookingList = [];
+
+        $search = $input['search'];
+
+        if(isset($search) && $search != '')
+        {
+            $getBookingList = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])
+                                            ->where(function ($query) use ($search) {
+                                                // Search on the 'mobile_no' column of 'getusers'
+                                                $query->whereHas('getusers', function ($subQuery) use ($search) {
+                                                    $subQuery->where('mobile_no', 'like', '%' . $search . '%');
+                                                })
+                                                // Search on the 'name' column of 'getescorts'
+                                                ->orWhereHas('getescorts', function ($subQuery) use ($search) {
+                                                    $subQuery->where('name', 'like', '%' . $search . '%');
+                                                });
+                                            })
+                                            ->paginate(15);
+        }
+        else
+        {
+            $getBookingList = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])->paginate(15);
+        }
 
         return view('admin.booking.list', compact('getBookingList'));
     }

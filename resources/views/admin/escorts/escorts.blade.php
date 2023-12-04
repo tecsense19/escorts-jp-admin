@@ -19,6 +19,15 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body pt-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex">
+                                <input name="search" id="search" class="form-control me-2" placeholder="Search Profile"/>
+                                <button name="clear-button" id="clear-button" class="btn btn-danger">Clear</button>
+                            </div>
+                            <div>
+                                <a href="{{ route('admin.create.escorts') }}"><button name="clear-button" id="clear-button" class="btn btn-primary">Create New</button></a>
+                            </div>
+                        </div>
                         <div class="tab-content pt-2 escortsDataList">
 
                         </div>
@@ -42,6 +51,50 @@
 
             var url = $(this).attr('href');
             getPerPageEscortsProfileList(url);
+        });
+
+        $('body').on('change', '.change-status', function(e) {
+            var userId = $(this).data('id');
+            var currentVal = $(this).val();
+            var message = $(this).data('status') ? 'In-Active' : 'Active';
+            
+            Swal.fire({
+                title: 'Are you sure?',
+                text: message + " this profile.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                confirmButtonColor: '#fe7d22',
+                cancelButtonText: 'No',
+                cancelButtonColor: '#d33',
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type:'post',
+                        headers: {'X-CSRF-TOKEN': jQuery('input[name=_token]').val()},
+                        url:'{{ route("admin.escorts.change.status") }}',
+                        data: { user_id: userId, status: currentVal },
+                        success:function(response)
+                        {
+                            Swal.fire({
+                                title: 'Success',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonColor: '#fe7d22',
+                                confirmButtonText: 'OK',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    escortsProfileList();
+                                }
+                            });
+                        }
+                    });
+                }
+            });
         });
     });
 
@@ -119,6 +172,11 @@
     $('body').on('keyup', '#search', function (e) 
     {
         escortsProfileList();
-    })
+    });
+
+    $('body').on('click', '#clear-button', function(e) {
+        $('#search').val('');
+        escortsProfileList();
+    });
 </script>
 @include('admin.layout.end')

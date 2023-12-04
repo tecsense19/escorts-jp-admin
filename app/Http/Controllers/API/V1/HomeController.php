@@ -7,6 +7,9 @@ use App\Models\ProfileImages;
 use App\Models\EscortsAvailability;
 use App\Models\EscortsBookings;
 use App\Models\BookingSlot;
+use App\Models\Countries;
+use App\Models\States;
+use App\Models\Cities;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -189,6 +192,61 @@ class HomeController extends BaseController
                 return $this->sendError('Invalid escort id.');
             }
 
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    public function countryList(Request $request)
+    {
+        try {
+
+            $getCountryList = Countries::get();
+
+            return $this->sendResponse($getCountryList, 'Country list get successfully.');
+
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    public function stateList(Request $request)
+    {
+        try {
+            $input = $request->all();
+
+            $validator = Validator::make($input, [
+                'country_id' => 'required'
+            ]);
+        
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->first());
+            }
+
+            $getStateList = States::where('country_id', $input['country_id'])->get();
+
+            return $this->sendResponse($getStateList, 'State list get successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    public function cityList(Request $request)
+    {
+        try {
+            $input = $request->all();
+
+            $validator = Validator::make($input, [
+                'state_id' => 'required'
+            ]);
+        
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->first());
+            }
+
+            $getCityList = Cities::where('state_id', $input['state_id'])->get();
+
+            return $this->sendResponse($getCityList, 'City list get successfully.');
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
         }

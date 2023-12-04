@@ -129,8 +129,8 @@
                                         </div>
 
                                         <div class="row" id="preview-container">
-                                            @if(isset($getUserDetails->escortImages))
-                                                @foreach($getUserDetails->escortImages as $key => $value)
+                                            @if(isset($getUserDetails->escort_images))
+                                                @foreach($getUserDetails->escort_images as $key => $value)
                                                     <div class="col-sm-3 image-preview">
                                                         <img src="{{ $value->file_path }}" alt="Image Preview" style="width: 100%;">
                                                         <button class="remove-image" data-index="{{ $key }}" data-id="{{ $value->id }}"><i class="bi bi-trash"></i></button>

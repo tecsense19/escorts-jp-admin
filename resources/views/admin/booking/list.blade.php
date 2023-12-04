@@ -44,7 +44,7 @@
                     <td>{{ date('Y-m-d', strtotime($booking->created_at)) }}</td>
                     <td class="text-center">
                         <div class="d-flex justify-content-center">
-                            <div class="me-2" role="button" onclick="deleteBooking('{{ $bookingId }}')"><i class="bi bi-trash"></i></div>
+                            <div class="me-2" role="button" onclick="deleteBooking('{{ $bookingId }}')" title="delete"><i class="bi bi-trash"></i></div>
                         </div>
                     </td>
                 </tr>

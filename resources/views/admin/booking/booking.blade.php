@@ -19,6 +19,15 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body pt-3">
+                        <div class="d-flex justify-content-end align-items-center">
+                            <div class="d-flex">
+                                <input name="search" id="search" class="form-control me-2" placeholder="Search Booking"/>
+                                <button name="clear-button" id="clear-button" class="btn btn-danger">Clear</button>
+                            </div>
+                            <div>
+                                
+                            </div>
+                        </div>
                         <div class="tab-content pt-2 bookingDataList">
 
                         </div>
@@ -47,7 +56,7 @@
 
     function bookingList()
     {
-        var search = '';
+        var search = $('#search').val();
         $.ajax({
             type:'post',
             headers: {'X-CSRF-TOKEN': jQuery('input[name=_token]').val()},
@@ -119,6 +128,11 @@
     $('body').on('keyup', '#search', function (e) 
     {
         bookingList();
-    })
+    });
+
+    $('body').on('click', '#clear-button', function(e) {
+        $('#search').val('');
+        bookingList();
+    });
 </script>
 @include('admin.layout.end')
