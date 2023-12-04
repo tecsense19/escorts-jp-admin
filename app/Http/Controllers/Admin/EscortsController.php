@@ -14,9 +14,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller as Controller;
+use App\Services\ApiClientService;
 
 use Hash;
 use Session;
+use Config;
  
 class EscortsController extends Controller
 {
@@ -39,149 +41,59 @@ class EscortsController extends Controller
         try {
             $input = $request->all();
 
-            if($input['user_id'])
-            {
-                $rules = [
-                    'full_name' => 'required|string',
-                    'email' => 'required|unique:users,email,' . $input['user_id'],
-                    'mobile_no' => 'required|numeric|unique:users,mobile_no,' . $input['user_id'], // 'unique' rule with 'ignore' constraint
-                ];
-                
-                $messages = [
-                    'mobile_no.numeric' => 'The mobile number must contain only numeric characters.',
-                    'mobile_no.unique' => 'The mobile number has already been taken.',
-                ];
-    
-                $validator = Validator::make($input, $rules, $messages);
-    
-                if ($validator->fails()) {
-                    // Validation failed, handle errors as needed
-                    return redirect()->back()->withError($validator->errors()->first())->withInput($request->all());
-                }
-            }
-            else
-            {
-                $rules = [
-                    'full_name' => 'required|string',
-                    'email' => 'required|unique:users,email',
-                    'mobile_no' => 'required|numeric|unique:users,mobile_no', // 'unique' rule with 'ignore' constraint
-                ];
-                
-                $messages = [
-                    'mobile_no.numeric' => 'The mobile number must contain only numeric characters.',
-                    'mobile_no.unique' => 'The mobile number has already been taken.',
-                ];
-    
-                $validator = Validator::make($input, $rules, $messages);
-    
-                if ($validator->fails()) {
-                    // Validation failed, handle errors as needed
-                    return redirect()->back()->withError($validator->errors()->first())->withInput($request->all());
-                }
-            }
+            $input['password'] = Hash::make(Hash::make(Str::random(8)));
 
-            if(isset($input['remove_img_ids']))
-            {
-                $getImages = ProfileImages::whereIn('id', explode(',', $input['remove_img_ids']))->where('type', 'image')->get();
-                foreach ($getImages as $key => $value) 
-                {
-                    $proFilePath = $value->file_path;
-                    $proPath = substr(strstr($proFilePath, 'public/'), strlen('public/'));
+            $url = config('constants.ADD_UPDATE_ESCORTS_PROFILE');
+            
+            $apiResponse = ApiClientService::apiCall($url, $input);
 
-                    if (file_exists(public_path($proPath))) {
-                        \File::delete(public_path($proPath));
+            if ($apiResponse && $apiResponse->success) {
+                $getUserDetails = $apiResponse->data;
+
+                if ($files = $request->file('image_upload')) {
+            
+                    foreach ($files as $file) {
+                        $path = 'public/uploads/escorts_profile/';
+                
+                        $filename = time() . '_' . $file->getClientOriginalName();
+                        $file->move($path, $filename);
+                
+                        $img = 'public/uploads/escorts_profile/' . $filename;
+                
+                        $imgData = [];
+                        $imgData['user_id'] = $getUserDetails->id;
+                        $imgData['type'] = 'image';
+                        $imgData['file_path'] = $img;
+    
+                        ProfileImages::create($imgData);
+                    }
+                }
+    
+                if ($files = $request->file('video_upload')) {
+                
+                    foreach ($files as $file) {
+                        $path = 'public/uploads/escorts_video/';
+                
+                        $filename = time() . '_' . $file->getClientOriginalName();
+                        $file->move($path, $filename);
+                
+                        $img = 'public/uploads/escorts_video/' . $filename;
+                
+                        $videoData = [];
+                        $videoData['user_id'] = $getUserDetails->id;
+                        $videoData['type'] = 'video';
+                        $videoData['file_path'] = $img;
+    
+                        ProfileImages::create($videoData);
                     }
                 }
 
-                ProfileImages::whereIn('id', explode(',', $input['remove_img_ids']))->where('type', 'image')->delete();   
-            }
-            if(isset($input['remove_video_ids']))
-            {
-                $getVideos = ProfileImages::whereIn('id', explode(',', $input['remove_video_ids']))->where('type', 'video')->get();
-                foreach ($getVideos as $key => $value) 
-                {
-                    $proFilePath = $value->file_path;
-                    $proPath = substr(strstr($proFilePath, 'public/'), strlen('public/'));
-
-                    if (file_exists(public_path($proPath))) {
-                        \File::delete(public_path($proPath));
-                    }
-                }
-
-                ProfileImages::whereIn('id', explode(',', $input['remove_video_ids']))->where('type', 'video')->delete();
-            }
-
-            $userData = [];
-            $userData['name'] = isset($input['full_name']) ? $input['full_name'] : '';
-            $userData['description'] = isset($input['about']) ? $input['about'] : '';
-            $userData['age'] = isset($input['age']) ? $input['age'] : '';
-            $userData['country'] = isset($input['country']) ? $input['country'] : '';
-            $userData['state'] = isset($input['state']) ? $input['state'] : '';
-            $userData['city'] = isset($input['city']) ? $input['city'] : '';
-            $userData['address'] = isset($input['address']) ? $input['address'] : '';
-            $userData['mobile_no'] = isset($input['mobile_no']) ? $input['mobile_no'] : '';
-            $userData['email'] = isset($input['email']) ? $input['email'] : '';
-            $userData['hourly_price'] = isset($input['hourly_price']) ? $input['hourly_price'] : '';
-
-            $userId = '';
-            $message = '';
-            if($input['user_id'])
-            {
-                User::where('id', $input['user_id'])->update($userData);
-                $userId = $input['user_id'];
-                $message = 'Profile updated successfully.';
+                return redirect()->route('admin.show.escorts')->withSuccess($apiResponse->message);
             }
             else
             {
-                $userData['password'] = Hash::make(Str::random(8));
-                $userData['user_role'] = 'escorts';
-                
-                $lastUser = User::create($userData);
-
-                $userId = $lastUser->id;
-
-                $message = 'Profile created successfully.';
+                return redirect()->back()->withError($apiResponse->message)->withInput($request->all());
             }
-
-            if ($files = $request->file('image_upload')) {
-            
-                foreach ($files as $file) {
-                    $path = 'public/uploads/escorts_profile/';
-            
-                    $filename = time() . '_' . $file->getClientOriginalName();
-                    $file->move($path, $filename);
-            
-                    $img = 'public/uploads/escorts_profile/' . $filename;
-            
-                    $imgData = [];
-                    $imgData['user_id'] = $userId;
-                    $imgData['type'] = 'image';
-                    $imgData['file_path'] = $img;
-
-                    ProfileImages::create($imgData);
-                }
-            }
-
-            if ($files = $request->file('video_upload')) {
-            
-                foreach ($files as $file) {
-                    $path = 'public/uploads/escorts_video/';
-            
-                    $filename = time() . '_' . $file->getClientOriginalName();
-                    $file->move($path, $filename);
-            
-                    $img = 'public/uploads/escorts_video/' . $filename;
-            
-                    $videoData = [];
-                    $videoData['user_id'] = $userId;
-                    $videoData['type'] = 'video';
-                    $videoData['file_path'] = $img;
-
-                    ProfileImages::create($videoData);
-                }
-            }
-
-            return redirect()->route('admin.show.escorts')->withSuccess($message);
 
         } catch (\Exception $e) {
             return redirect()->back()->withError($e->getMessage());
@@ -228,7 +140,25 @@ class EscortsController extends Controller
 
     public function listEscorts(Request $request)
     {
-        $escortsList = User::where('user_role', 'escorts')->paginate(15);
+        $input = $request->all();
+
+        $escortsList = [];
+
+        $search = $input['search'];
+
+        if(isset($search) && $search != '')
+        {
+            $escortsList = User::where('user_role', 'escorts')
+                            ->where(function ($query) use ($search) {
+                                $query->where('name', 'like', '%' . $search . '%')
+                                    ->orWhere('email', 'like', '%' . $search . '%');
+                            })
+                            ->paginate(15);
+        }
+        else
+        {
+            $escortsList = User::where('user_role', 'escorts')->paginate(15);
+        }
 
         return view('admin.escorts.list', compact('escortsList'));
     }
@@ -236,11 +166,22 @@ class EscortsController extends Controller
     public function edit($userId)
     {
         $userId = Crypt::decryptString($userId);
-        
-        $getUserDetails = User::where('id', $userId)->with('escortImages')->with('escortVideos')->first();
 
-        $countryData = Countries::get();
-        return view('admin.escorts.add', compact('countryData', 'getUserDetails'));
+        $url = config('constants.GET_ESCORTS_PROFILE');
+        $parms = array('user_id' => $userId);
+        
+        $apiResponse = ApiClientService::apiCall($url, $parms);
+
+        if ($apiResponse && $apiResponse->success) {
+            $getUserDetails = $apiResponse->data;
+
+            $countryData = Countries::get();
+            return view('admin.escorts.add', compact('countryData', 'getUserDetails'));
+        }
+        else
+        {
+            return redirect()->back()->withError($apiResponse->message);
+        }
     }
 
     public function deleteEscorts(Request $request)
@@ -288,6 +229,17 @@ class EscortsController extends Controller
         User::where('id', $userId)->delete();
 
         return response()->json(['success' => true, 'message' => 'Escorts profile deleted successfully.']);
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $input = $request->all();
+
+        $userId = Crypt::decryptString($input['user_id']);
+
+        User::where('id', $userId)->update(['status' => $input['status']]);
+
+        return response()->json(['success' => true, 'message' => 'Status change successfully.']);
     }
 
     public function calendarEvent($userId)
