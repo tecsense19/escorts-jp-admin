@@ -41,8 +41,6 @@ class EscortsController extends Controller
         try {
             $input = $request->all();
 
-            $input['password'] = Hash::make(Hash::make(Str::random(8)));
-
             $url = config('constants.ADD_UPDATE_ESCORTS_PROFILE');
             
             $apiResponse = ApiClientService::apiCall($url, $input);
