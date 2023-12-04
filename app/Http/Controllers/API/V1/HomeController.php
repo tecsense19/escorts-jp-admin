@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\User;
-use App\Models\ProfileImages;
-use App\Models\EscortsAvailability;
-use App\Models\EscortsBookings;
-use App\Models\BookingSlot;
-use App\Models\Countries;
 use App\Models\States;
 use App\Models\Cities;
-use Illuminate\Http\JsonResponse;
+use App\Models\Countries;
+use App\Models\BookingSlot;
+use App\Models\ProfileImages;
+use App\Models\EscortsBookings;
+use App\Models\EscortsAvailability;
+
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Api\BaseController as BaseController;
 use Validator;
