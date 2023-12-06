@@ -35,4 +35,8 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('/escort/login', [EscortsController::class, 'login']);
     Route::post('/escort/profile', [EscortsController::class, 'getEscortProfile']);
     Route::post('/escort/availability/add', [EscortsController::class, 'escortAvailabilityAdd']);
+    Route::post('/escort/change/password', [EscortsController::class, 'changePassword']);
+    Route::post('/escort/forgot/password', [EscortsController::class, 'forgotPassword']);
+
+    Route::post('/favourite/escort', [EscortsController::class, 'favouriteEscorts']);
 });

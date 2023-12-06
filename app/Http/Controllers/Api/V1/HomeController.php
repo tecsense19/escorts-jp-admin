@@ -9,6 +9,7 @@ use App\Models\Countries;
 use App\Models\BookingSlot;
 use App\Models\ProfileImages;
 use App\Models\EscortsBookings;
+use App\Models\FavouriteEscorts;
 use App\Models\EscortsAvailability;
 
 use Illuminate\Http\Request;
@@ -92,7 +93,21 @@ class HomeController extends BaseController
         try {
             $input = $request->all();
 
-            $getEscortsList = User::with('escortImages')->with('escortVideos')->where('user_role', 'escorts')->get();
+            $userId = isset($input['user_id']) ? $input['user_id'] : '';
+            $filter = isset($input['filter']) ? $input['filter'] : '';
+
+            $getEscortsList = User::select('users.*')
+                    ->selectRaw('(CASE WHEN favourite_escorts.escort_id IS NOT NULL THEN 1 ELSE 0 END) AS is_favourite')
+                    ->leftJoin('favourite_escorts', function ($join) use ($userId) {
+                        $join->on('users.id', '=', 'favourite_escorts.escort_id')
+                            ->where('favourite_escorts.user_id', $userId);
+                    })
+                    ->with('escortImages', 'escortVideos')
+                    ->when($filter == 'is_favourite', function ($query) use ($userId) {
+                        $query->where('favourite_escorts.user_id', $userId);
+                    })
+                    ->where('users.user_role', 'escorts')
+                    ->get();
 
             return $this->sendResponse($getEscortsList, 'Escorts list get successfully.');
 
@@ -118,9 +133,15 @@ class HomeController extends BaseController
             $escort_id = $input['escort_id'];
             $selected_date = date('Y-m-d', strtotime($input['selected_date']));
 
-            $getBookedSlot = BookingSlot::where('escort_id', $escort_id)->where('booking_date', date('Y-m-d', strtotime($input['selected_date'])))->pluck('booking_time')->toArray();
+            $getBookedSlot = BookingSlot::where('escort_id', $escort_id)
+                                        ->where('booking_date', date('Y-m-d', strtotime($input['selected_date'])))
+                                        ->pluck('booking_time')
+                                        ->toArray();
 
-            $getAvailability = EscortsAvailability::where('user_id', $escort_id)->where('available_date', $selected_date)->whereNotIn('available_time', $getBookedSlot)->get();
+            $getAvailability = EscortsAvailability::where('user_id', $escort_id)
+                                                    ->where('available_date', $selected_date)
+                                                    ->whereNotIn('available_time', $getBookedSlot)
+                                                    ->get();
             
             return $this->sendResponse($getAvailability, 'Escorts are available for the selected date.');
 

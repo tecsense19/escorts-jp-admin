@@ -6,16 +6,19 @@ use App\Models\User;
 use App\Models\BookingSlot;
 use App\Models\ProfileImages;
 use App\Models\EscortsBookings;
+use App\Models\FavouriteEscorts;
 use App\Models\EscortsAvailability;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
 use App\Http\Controllers\Api\BaseController as BaseController;
 
 use Hash;
+use Mail;
 use Validator;
 
 class EscortsController extends BaseController
@@ -34,6 +37,7 @@ class EscortsController extends BaseController
                 'state' => 'required',
                 'city' => 'required',
                 'hourly_price' => 'required',
+                'line_number' => 'required',
                 'mobile_no' => isset($input['user_id']) && $input['user_id'] != ''
                     ? 'required|numeric|unique:users,mobile_no,' . $input['user_id']
                     : 'required|numeric|unique:users,mobile_no',
@@ -57,6 +61,7 @@ class EscortsController extends BaseController
             $userData['state'] = isset($input['state']) ? $input['state'] : '';
             $userData['city'] = isset($input['city']) ? $input['city'] : '';
             $userData['mobile_no'] = isset($input['mobile_no']) ? $input['mobile_no'] : '';
+            $userData['line_number'] = isset($input['line_number']) ? $input['line_number'] : '';
             $userData['email'] = isset($input['email']) ? $input['email'] : '';
             $userData['hourly_price'] = isset($input['hourly_price']) ? $input['hourly_price'] : '';
 
@@ -281,6 +286,138 @@ class EscortsController extends BaseController
             $getAvailability = EscortsAvailability::where('user_id', $userId)->where('available_date', $availableDate)->get();
 
             return $this->sendResponse($getAvailability, 'Availability added successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    public function changePassword(Request $request)
+    {
+        try {
+            $input = $request->all();
+
+            $validator = Validator::make($input, [
+                'user_id' => 'required',
+                'old_password' => 'required',
+                'new_password' => 'required',
+            ]);
+        
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->first());
+            }
+
+            $getUserDetails = User::where('id', $input['user_id'])->where('user_role', 'escorts')->first();
+
+            if($getUserDetails)
+            {
+                if(Hash::check($input['old_password'], $getUserDetails->password))
+                {
+                    $userData = [];
+                    $userData['password'] = isset($input['new_password']) ? Hash::make($input['new_password']) : '';
+
+                    User::where('id', $input['user_id'])->update($userData);
+
+                    $profileDetails = User::where('id', $input['user_id'])->first();
+
+                    return $this->sendResponse($profileDetails, 'Password change successfully.');
+                }
+                else
+                {
+                    return $this->sendError('Current password are not match.');
+                }
+            }
+            else
+            {
+                return $this->sendError('Invalid user.');
+            }
+
+        } catch (\Exception $e) {
+            return redirect()->back()->withError($e->getMessage());
+        }
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        try {
+            $input = $request->all();
+
+            $validator = Validator::make($input, [
+                'email' => 'required'
+            ]);
+        
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->first());
+            }
+
+            $checkEmail = User::where('email', $input['email'])->where('user_role', 'escorts')->first();
+
+            if($checkEmail)
+            {
+                $redToken = Str::random(8);
+
+                $dataArr = [];
+                $dataArr['forgot_pass_date'] = date('Y-m-d H:i:s');
+                $dataArr['forgot_pass_token'] = $redToken;
+                $dataArr['forgot_pass'] = 0;
+
+                User::where('email', $input['email'])->update($dataArr);
+
+                $respoArr['full_name'] = $checkEmail->fname . ' ' . $checkEmail->lname;
+                $respoArr['pass_link'] = url('/').'/'.'forgot/password/view/'.Crypt::encryptString($checkEmail->rid).'/'.Crypt::encryptString($redToken);
+                $respoArr['logo_link'] = url('/').'/'.'public/assets/img/site-logo.png';
+
+                Mail::send('email/forgot_pass_mail', ['user' => $respoArr], function ($m) use ($respoArr, $input) {
+                    $m->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+
+                    $m->to( $input['email'] )->subject('Forgot Password');
+                });
+
+                return $this->sendResponse($input['email'], 'A password reset link has been sent to your email address. Please check your email for further instructions.');
+            }
+            else
+            {
+                return $this->sendError('Invalid user.');
+            }
+
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    public function favouriteEscorts(Request $request)
+    {
+        try {
+
+            $input = $request->all();
+
+            $validator = Validator::make($input, [
+                'escort_id' => 'required',
+                'user_id' => 'required',
+            ]);
+        
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->first());
+            }
+
+            $favouriteArr = [];
+            $favouriteArr['escort_id'] = $input['escort_id'];
+            $favouriteArr['user_id'] = $input['user_id'];
+            $favouriteArr['is_favourite'] = $input['is_favourite'];
+
+            $message = '';
+            if($input['is_favourite'] == '1')
+            {
+                $lastId = FavouriteEscorts::create($favouriteArr);
+                $message = 'Escort favourite Successfully.';
+            }
+            else
+            {
+                FavouriteEscorts::where('escort_id', $input['escort_id'])->where('user_id', $input['user_id'])->delete($favouriteArr);
+                $message = 'Escort unfavourite Successfully.';
+            }
+
+            return $this->sendResponse($input['is_favourite'], $message);
+
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
         }
