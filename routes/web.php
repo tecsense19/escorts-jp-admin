@@ -41,6 +41,8 @@ Route::group(['middleware' => ['admin']], function () {
     Route::post('/escorts/list', [EscortsController::class, 'listEscorts'])->name('admin.escorts.list');
     Route::post('/escorts/delete', [EscortsController::class, 'deleteEscorts'])->name('admin.escorts.delete');
     Route::post('/escorts/change/status', [EscortsController::class, 'changeStatus'])->name('admin.escorts.change.status');
+    Route::get('/escorts/view/{user_id}', [EscortsController::class, 'viewProfile'])->name('admin.view.escorts');
+    Route::post('/escorts/wise/bookings/list', [EscortsController::class, 'bookingList'])->name('admin.escort.wise.booking.list');
 
     Route::get('/calendar/event/{user_id}', [EscortsController::class, 'calendarEvent'])->name('admin.calendar.event');
 

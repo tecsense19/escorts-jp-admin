@@ -107,44 +107,44 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <label for="full_name" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
+                                        <label for="full_name" class="col-md-4 col-lg-3 col-form-label">Full Name:</label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="full_name" type="text" class="form-control" id="full_name" value="{{ $fullName }}" required>
                                             <input type="hidden" name="user_id" id="user_id" value="{{ Auth::user()->id }}"/>
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <label for="about" class="col-md-4 col-lg-3 col-form-label">About</label>
+                                        <label for="about" class="col-md-4 col-lg-3 col-form-label">About:</label>
                                         <div class="col-md-8 col-lg-9">
                                             <textarea name="about" class="form-control" id="about" style="height: 100px">{{ $description }}</textarea>
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <label for="user_role" class="col-md-4 col-lg-3 col-form-label">Role</label>
+                                        <label for="user_role" class="col-md-4 col-lg-3 col-form-label">Role:</label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="user_role" type="text" class="form-control" id="user_role" value="{{ Auth::user()->user_role }}" readonly>
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <label for="country" class="col-md-4 col-lg-3 col-form-label">Country</label>
+                                        <label for="country" class="col-md-4 col-lg-3 col-form-label">Country:</label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="country" type="text" class="form-control" id="country" value="{{ $country }}">
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <label for="address" class="col-md-4 col-lg-3 col-form-label">Address</label>
+                                        <label for="address" class="col-md-4 col-lg-3 col-form-label">Address:</label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="address" type="text" class="form-control" id="address" value="{{ $address }}">
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <label for="mobile_no" class="col-md-4 col-lg-3 col-form-label">Mobile</label>
+                                        <label for="mobile_no" class="col-md-4 col-lg-3 col-form-label">Mobile:</label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="mobile_no" type="text" class="form-control" id="mobile_no" value="{{ $mobileNo }}">
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <label for="email" class="col-md-4 col-lg-3 col-form-label">Email</label>
+                                        <label for="email" class="col-md-4 col-lg-3 col-form-label">Email:</label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="email" type="email" class="form-control" id="email" value="{{ Auth::user()->email }}" readonly>
                                         </div>

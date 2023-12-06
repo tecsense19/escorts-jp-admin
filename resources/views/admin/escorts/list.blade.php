@@ -34,6 +34,7 @@
                     <td>{{ date('Y-m-d', strtotime($user->created_at)) }}</td>
                     <td class="text-center">
                         <div class="d-flex justify-content-center">
+                            <div class="me-2" role="button"><a href="{{ route('admin.view.escorts', ['user_id' => $userId]) }}" title="Availability"><i class="bi bi-eye" style="color: #000000;"></i></a></div>
                             <div class="me-2" role="button"><a href="{{ route('admin.edit.escorts', ['user_id' => $userId]) }}" title="Edit"><i class="bi bi-pencil-square" style="color: #000000;"></i></a></div>
                             <div class="me-2" role="button" onclick="deleteEscortsProfile('{{ $userId }}')" title="Delete"><i class="bi bi-trash"></i></div>
                             <div class="me-2" role="button"><a href="{{ route('admin.calendar.event', ['user_id' => $userId]) }}" title="Availability"><i class="bi bi-calendar" style="color: #000000;"></i></a></div>

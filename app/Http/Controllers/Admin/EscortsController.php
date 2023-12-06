@@ -7,6 +7,7 @@ use App\Models\Countries;
 use App\Models\States;
 use App\Models\Cities;
 use App\Models\ProfileImages;
+use App\Models\EscortsBookings;
 use App\Models\EscortsAvailability;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
@@ -275,7 +276,9 @@ class EscortsController extends Controller
             $availableArr = [];
             $availableArr['user_id'] = $userId;
             $availableArr['available_date'] = $availableDate;
-            $availableArr['available_time'] = date('H:i', strtotime($explodeSlot[$i]));
+            $availableArr['available_time'] = date('H:i:s', strtotime($explodeSlot[$i]));
+            $availableArr['start_time'] = date('H:i:s', strtotime($explodeSlot[$i]));
+            $availableArr['end_time'] = date('H:i:s', strtotime($explodeSlot[$i]) + 3600);
 
             $checkAvailable = EscortsAvailability::where('user_id', $userId)
                                                 ->where('available_date', $availableDate)
@@ -303,7 +306,7 @@ class EscortsController extends Controller
 
         $userId = Crypt::decryptString($input['user_id']);
 
-        $availableList = EscortsAvailability::where('user_id', $userId)->where('available_date', '>=', date('Y-m-d'))->get();
+        $availableList = EscortsAvailability::where('user_id', $userId)->where('available_date', '>=', date('Y-m-d'))->orderBy('available_time', 'asc')->get();
 
         $responseArr = [];
         foreach ($availableList as $key => $value) {
@@ -320,6 +323,73 @@ class EscortsController extends Controller
         }
 
         return response()->json(['success' => true, 'data' => json_encode($responseArr), 'message' => 'Escorts availability list successfully.']);
+    }
+
+    public function viewProfile($userId)
+    {
+        $userId = Crypt::decryptString($userId);
+
+        $url = config('constants.GET_ESCORTS_PROFILE');
+        $parms = array('user_id' => $userId);
+        
+        $apiResponse = ApiClientService::apiCall($url, $parms);
+
+        if ($apiResponse && $apiResponse->success) {
+            $getUserDetails = $apiResponse->data;
+
+            $countryData = Countries::get();
+            return view('admin.escorts.view', compact('countryData', 'getUserDetails'));
+        }
+        else
+        {
+            return redirect()->back()->withError($apiResponse->message);
+        }
+    }
+
+    public function bookingList(Request $request)
+    {
+        $input = $request->all();
+
+        $getBookingList = [];
+
+        $search = $input['search'];
+
+        if(isset($search) && $search != '' || $input['booking_type'] != "")
+        {
+            $getBookingList = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])
+                                            ->where(function ($query) use ($search) {
+                                                // Search on the 'mobile_no' column of 'getusers'
+                                                $query->whereHas('getusers', function ($subQuery) use ($search) {
+                                                    $subQuery->where('mobile_no', 'like', '%' . $search . '%');
+                                                })
+                                                // Search on the 'name' column of 'getescorts'
+                                                ->orWhereHas('getescorts', function ($subQuery) use ($search) {
+                                                    $subQuery->where('name', 'like', '%' . $search . '%');
+                                                });
+                                            })
+                                            ->where('escort_id', $input['escort_id'])
+                                            ->where(function ($query) use ($input) {
+                                                // Filter past bookings
+                                                if ($input['booking_type'] == 'past') {
+                                                    $query->whereHas('bookingSlots', function ($subQuery) {
+                                                        $subQuery->where('booking_date', '<', date('Y-m-d'));
+                                                    });
+                                                }
+                                                // Filter upcoming bookings
+                                                if ($input['booking_type'] == 'upcoming') {
+                                                    $query->whereHas('bookingSlots', function ($subQuery) {
+                                                        $subQuery->where('booking_date', '>=', date('Y-m-d'));
+                                                    });
+                                                }
+                                            })
+                                            ->paginate(15);
+        }
+        else
+        {
+            $getBookingList = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])->paginate(15);
+        }
+
+        return view('admin.escorts.booking_list', compact('getBookingList'));
     }
 }
 
