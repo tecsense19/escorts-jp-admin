@@ -27,6 +27,7 @@ class User extends Authenticatable
         'city',
         'address',
         'mobile_no',
+        'line_number',
         'profile_pic',
         'user_role',
         'age',
@@ -62,5 +63,10 @@ class User extends Authenticatable
     public function escortVideos()
     {
         return $this->hasMany(ProfileImages::class, 'user_id', 'id')->where('type', '=', 'video');
+    }
+    
+    public function escortFavourites()
+    {
+        return $this->hasOne(FavouriteEscorts::class, 'escort_id', 'id');
     }
 }

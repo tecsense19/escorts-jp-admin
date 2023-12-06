@@ -8,6 +8,7 @@
     $city = isset($getUserDetails) ? $getUserDetails->city : old('city');
     $address = isset($getUserDetails) ? $getUserDetails->address : old('address');
     $mobile_no = isset($getUserDetails) ? $getUserDetails->mobile_no : old('mobile_no');
+    $line_number = isset($getUserDetails) ? $getUserDetails->line_number : old('line_number');
     $email = isset($getUserDetails) ? $getUserDetails->email : old('email');
     $hourly_price = isset($getUserDetails) ? $getUserDetails->hourly_price : old('hourly_price');
 @endphp
@@ -220,9 +221,15 @@
                                     </div>
                                 </div> -->
                                 <div class="row mb-3">
-                                    <label for="mobile_no" class="col-md-4 col-lg-3 col-form-label">Mobile</label>
+                                    <label for="mobile_no" class="col-md-4 col-lg-3 col-form-label">Whatsapp Number</label>
                                     <div class="col-md-8 col-lg-9">
                                         <input name="mobile_no" type="number" class="form-control" id="mobile_no" value="{{ $mobile_no }}">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="line_number" class="col-md-4 col-lg-3 col-form-label">Line Number</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <input name="line_number" type="number" class="form-control" id="line_number" value="{{ $line_number }}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -286,6 +293,9 @@
                 mobile_no : {
                     required: true,
                 },
+                line_number : {
+                    required: true,
+                },
                 email: {
                     required: true,
                 },
@@ -314,6 +324,9 @@
                 },
                 mobile_no : {
                     required: 'Mobile no is required!',
+                },
+                line_number : {
+                    required: 'Line no is required!',
                 },
                 email : {
                     required: 'Email is required!',
