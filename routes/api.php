@@ -24,7 +24,7 @@ Route::post('/v1/sent/otp', [HomeController::class, 'sentOtp']);
 Route::post('/v1/verify/otp', [HomeController::class, 'verifyOtp']);
 
 Route::group(['prefix' => 'v1'], function () {
-    Route::get('/escorts/list', [HomeController::class, 'escortsList']);
+    Route::post('/escorts/list', [HomeController::class, 'escortsList']);
     Route::post('/country/list', [HomeController::class, 'countryList']);
     Route::post('/state/list', [HomeController::class, 'stateList']);
     Route::post('/city/list', [HomeController::class, 'cityList']);

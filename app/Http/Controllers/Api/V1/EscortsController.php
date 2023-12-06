@@ -407,8 +407,17 @@ class EscortsController extends BaseController
             $message = '';
             if($input['is_favourite'] == '1')
             {
-                $lastId = FavouriteEscorts::create($favouriteArr);
-                $message = 'Escort favourite Successfully.';
+                $checkEntry = FavouriteEscorts::where('escort_id', $input['escort_id'])->where('user_id', $input['user_id'])->first();
+                if($checkEntry)
+                {
+                    $lastId = FavouriteEscorts::where('id', $checkEntry->id)->update($favouriteArr);
+                    $message = 'Escort favourite Successfully.';
+                }
+                else
+                {
+                    $lastId = FavouriteEscorts::create($favouriteArr);
+                    $message = 'Escort favourite Successfully.';
+                }
             }
             else
             {
