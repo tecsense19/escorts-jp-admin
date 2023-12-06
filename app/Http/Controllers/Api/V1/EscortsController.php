@@ -391,7 +391,7 @@ class EscortsController extends BaseController
             $input = $request->all();
 
             $validator = Validator::make($input, [
-                'escort_id' => 'required',
+                'escort_ids' => 'required',
                 'user_id' => 'required',
             ]);
         
@@ -399,29 +399,26 @@ class EscortsController extends BaseController
                 return $this->sendError($validator->errors()->first());
             }
 
-            $favouriteArr = [];
-            $favouriteArr['escort_id'] = $input['escort_id'];
-            $favouriteArr['user_id'] = $input['user_id'];
-            $favouriteArr['is_favourite'] = $input['is_favourite'];
+            $explodeIds = isset($input['escort_ids']) ? explode(',', $input['escort_ids']) : [];
+
+            FavouriteEscorts::whereIn('escort_id', $explodeIds)->where('user_id', $input['user_id'])->delete();
 
             $message = '';
             if($input['is_favourite'] == '1')
             {
-                $checkEntry = FavouriteEscorts::where('escort_id', $input['escort_id'])->where('user_id', $input['user_id'])->first();
-                if($checkEntry)
-                {
-                    $lastId = FavouriteEscorts::where('id', $checkEntry->id)->update($favouriteArr);
-                    $message = 'Escort favourite Successfully.';
-                }
-                else
-                {
-                    $lastId = FavouriteEscorts::create($favouriteArr);
+                for ($i=0; $i < count($explodeIds); $i++) 
+                { 
+                    $favouriteArr = [];
+                    $favouriteArr['escort_id'] = $explodeIds[$i];
+                    $favouriteArr['user_id'] = $input['user_id'];
+                    $favouriteArr['is_favourite'] = $input['is_favourite'];
+                    
+                    FavouriteEscorts::create($favouriteArr);
                     $message = 'Escort favourite Successfully.';
                 }
             }
             else
             {
-                FavouriteEscorts::where('escort_id', $input['escort_id'])->where('user_id', $input['user_id'])->delete($favouriteArr);
                 $message = 'Escort unfavourite Successfully.';
             }
 

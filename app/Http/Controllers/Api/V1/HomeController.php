@@ -141,9 +141,60 @@ class HomeController extends BaseController
             $getAvailability = EscortsAvailability::where('user_id', $escort_id)
                                                     ->where('available_date', $selected_date)
                                                     ->whereNotIn('available_time', $getBookedSlot)
-                                                    ->get();
+                                                    ->get()->toArray();
+
+            $responseArr = [];
+            if(isset($input['slot_duration']) && $input['slot_duration'] == 2)
+            {
+                for ($i=0; $i < count($getAvailability); $i += 2) 
+                {
+                    if(isset($getAvailability[$i+1]))
+                    {
+                        $newObj = new \StdClass();
+                        $newObj->id = $getAvailability[$i]['id'];
+                        $newObj->ids = (int)$getAvailability[$i]['id'] .','.(int)$getAvailability[$i+1]['id'];
+                        $newObj->user_id = $getAvailability[$i]['user_id'];
+                        $newObj->available_date = $getAvailability[$i]['available_date'];
+                        $newObj->available_time = $getAvailability[$i]['available_time'];
+
+                        $slotObj = new \StdClass();
+                        $slotObj->from_time = date('H:i', strtotime($getAvailability[$i]['available_time']));
+                        $slotObj->to_time = date('H:i', (strtotime($getAvailability[$i]['available_time']) + 3600));
+
+                        $newObj->slot_arr[] = $slotObj;
+
+                        $slotObj = new \StdClass();
+                        $slotObj->from_time = date('H:i', strtotime($getAvailability[$i+1]['available_time']));
+                        $slotObj->to_time = date('H:i', (strtotime($getAvailability[$i+1]['available_time']) + 3600));
+
+                        $newObj->slot_arr[] = $slotObj;
+
+                        $responseArr[] = $newObj;
+                    }
+                }
+            }
+            else
+            {
+                foreach ($getAvailability as $key => $value) 
+                {
+                    $newObj = new \StdClass();
+                    $newObj->id = $value['id'];
+                    $newObj->ids = $value['id'];
+                    $newObj->user_id = $value['user_id'];
+                    $newObj->available_date = $value['available_date'];
+                    $newObj->available_time = $value['available_time'];
+
+                    $slotObj = new \StdClass();
+                    $slotObj->from_time = date('H:i', strtotime($value['available_time']));
+                    $slotObj->to_time = date('H:i', (strtotime($value['available_time']) + 3600));
+
+                    $newObj->slot_arr[] = $slotObj;
+
+                    $responseArr[] = $newObj;
+                }
+            }
             
-            return $this->sendResponse($getAvailability, 'Escorts are available for the selected date.');
+            return $this->sendResponse($responseArr, 'Escorts are available for the selected date.');
 
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
