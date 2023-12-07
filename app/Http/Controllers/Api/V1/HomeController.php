@@ -13,9 +13,11 @@ use App\Models\FavouriteEscorts;
 use App\Models\EscortsAvailability;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Api\BaseController as BaseController;
+use DB;
 use Validator;
 
 class HomeController extends BaseController
@@ -141,35 +143,90 @@ class HomeController extends BaseController
             $getAvailability = EscortsAvailability::where('user_id', $escort_id)
                                                     ->where('available_date', $selected_date)
                                                     ->whereNotIn('available_time', $getBookedSlot)
+                                                    ->orderBy('available_time', 'asc')
                                                     ->get()->toArray();
 
-            $responseArr = [];
-            if(isset($input['slot_duration']) && $input['slot_duration'] == 2)
+            // $responseArr = [];
+            // if(isset($input['slot_duration']) && $input['slot_duration'] == 2)
+            // {
+            //     for ($i=0; $i < count($getAvailability); $i += 2) 
+            //     {
+            //         if(isset($getAvailability[$i+1]))
+            //         {
+            //             if(date('H:i:s', (strtotime($getAvailability[$i]['available_time']) + 3600)) == date('H:i:s', strtotime($getAvailability[$i+1]['available_time'])))
+            //             {
+            //                 $newObj = new \StdClass();
+            //                 $newObj->id = $getAvailability[$i]['id'];
+            //                 $newObj->ids = (int)$getAvailability[$i]['id'] .','.(int)$getAvailability[$i+1]['id'];
+            //                 $newObj->user_id = $getAvailability[$i]['user_id'];
+            //                 $newObj->available_date = $getAvailability[$i]['available_date'];
+            //                 $newObj->available_time = $getAvailability[$i]['available_time'];
+
+            //                 $slotObj = new \StdClass();
+            //                 $slotObj->from_time = date('H:i', strtotime($getAvailability[$i]['available_time']));
+            //                 $slotObj->to_time = date('H:i', (strtotime($getAvailability[$i]['available_time']) + 3600));
+
+            //                 $newObj->slot_arr[] = $slotObj;
+
+            //                 $slotObj = new \StdClass();
+            //                 $slotObj->from_time = date('H:i', strtotime($getAvailability[$i+1]['available_time']));
+            //                 $slotObj->to_time = date('H:i', (strtotime($getAvailability[$i+1]['available_time']) + 3600));
+
+            //                 $newObj->slot_arr[] = $slotObj;
+
+            //                 $responseArr[] = $newObj;
+            //             }
+            //         }
+            //     }
+            // }
+            // else
+            // {
+            //     foreach ($getAvailability as $key => $value) 
+            //     {
+            //         $newObj = new \StdClass();
+            //         $newObj->id = $value['id'];
+            //         $newObj->ids = $value['id'];
+            //         $newObj->user_id = $value['user_id'];
+            //         $newObj->available_date = $value['available_date'];
+            //         $newObj->available_time = $value['available_time'];
+
+            //         $slotObj = new \StdClass();
+            //         $slotObj->from_time = date('H:i', strtotime($value['available_time']));
+            //         $slotObj->to_time = date('H:i', (strtotime($value['available_time']) + 3600));
+
+            //         $newObj->slot_arr[] = $slotObj;
+
+            //         $responseArr[] = $newObj;
+            //     }
+            // }
+            $slotDuration = $input['slot_duration'];
+
+            $filteredSlots = collect();
+
+            if($slotDuration == 2)
             {
-                for ($i=0; $i < count($getAvailability); $i += 2) 
-                {
-                    if(isset($getAvailability[$i+1]))
-                    {
-                        $newObj = new \StdClass();
-                        $newObj->id = $getAvailability[$i]['id'];
-                        $newObj->ids = (int)$getAvailability[$i]['id'] .','.(int)$getAvailability[$i+1]['id'];
-                        $newObj->user_id = $getAvailability[$i]['user_id'];
-                        $newObj->available_date = $getAvailability[$i]['available_date'];
-                        $newObj->available_time = $getAvailability[$i]['available_time'];
+                $twoHourSlots = EscortsAvailability::select('escorts_availability.id', 'escorts_availability.start_time', 'escorts_availability.end_time', 'escorts_availability.available_date', 'escorts_availability.available_time', 'escorts_availability.user_id')
+                                                    ->where('escorts_availability.user_id', $escort_id)
+                                                    ->where('escorts_availability.available_date', $selected_date)
+                                                    ->join('escorts_availability as next_slot', 'next_slot.start_time', '=', 'escorts_availability.end_time')
+                                                    ->select('escorts_availability.id', 'escorts_availability.start_time', 'next_slot.end_time', 'escorts_availability.available_date', 'escorts_availability.available_time', 'escorts_availability.user_id')
+                                                    ->whereRaw("TIMEDIFF(next_slot.end_time, escorts_availability.start_time) = '2:00:00'") // 1 hour
+                                                    ->whereNotIn('escorts_availability.start_time', $getBookedSlot)
+                                                    ->whereNotIn('escorts_availability.end_time', $getBookedSlot)
+                                                    ->orderBy('escorts_availability.start_time', 'asc')
+                                                    ->get();
 
-                        $slotObj = new \StdClass();
-                        $slotObj->from_time = date('H:i', strtotime($getAvailability[$i]['available_time']));
-                        $slotObj->to_time = date('H:i', (strtotime($getAvailability[$i]['available_time']) + 3600));
-
-                        $newObj->slot_arr[] = $slotObj;
-
-                        $slotObj = new \StdClass();
-                        $slotObj->from_time = date('H:i', strtotime($getAvailability[$i+1]['available_time']));
-                        $slotObj->to_time = date('H:i', (strtotime($getAvailability[$i+1]['available_time']) + 3600));
-
-                        $newObj->slot_arr[] = $slotObj;
-
-                        $responseArr[] = $newObj;
+                foreach ($twoHourSlots as $index => $slot) {
+                    // If it's the first slot or there's no overlap with the previous slot, add it to the filtered collection
+                    if ($index === 0 || $slot->start_time >= $filteredSlots->last()['end_time']) {
+                        $filteredSlots->push([
+                            'id' => $slot->id,
+                            'user_id' => $slot->user_id,
+                            'available_date' => $slot->available_date,
+                            'available_time' => $slot->available_time,
+                            'start_time' => $slot->start_time,
+                            'end_time' => $slot->end_time,
+                        ]);
                     }
                 }
             }
@@ -177,24 +234,18 @@ class HomeController extends BaseController
             {
                 foreach ($getAvailability as $key => $value) 
                 {
-                    $newObj = new \StdClass();
-                    $newObj->id = $value['id'];
-                    $newObj->ids = $value['id'];
-                    $newObj->user_id = $value['user_id'];
-                    $newObj->available_date = $value['available_date'];
-                    $newObj->available_time = $value['available_time'];
-
-                    $slotObj = new \StdClass();
-                    $slotObj->from_time = date('H:i', strtotime($value['available_time']));
-                    $slotObj->to_time = date('H:i', (strtotime($value['available_time']) + 3600));
-
-                    $newObj->slot_arr[] = $slotObj;
-
-                    $responseArr[] = $newObj;
+                    $filteredSlots->push([
+                        'id' => $value['id'],
+                        'user_id' => $value['user_id'],
+                        'available_date' => $value['available_date'],
+                        'available_time' => $value['available_time'],
+                        'start_time' => date('H:i:s', strtotime($value['start_time'])),
+                        'end_time' => date('H:i:s', strtotime($value['end_time'])),
+                    ]);
                 }
             }
-            
-            return $this->sendResponse($responseArr, 'Escorts are available for the selected date.');
+
+            return $this->sendResponse($filteredSlots, 'Escorts are available for the selected date.');
 
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
@@ -210,10 +261,10 @@ class HomeController extends BaseController
                 'escort_id' => 'required|numeric',
                 'user_id' => 'required|numeric',
                 'hotel_name' => 'required|string',
-                'room_number' => 'required|string',
                 'selected_word' => 'required|string',
                 'booking_date' => 'required|date_format:Y-m-d',
-                'slot_ids' => 'required|string'
+                'slot_ids' => 'required|string',
+                'slot_duration' => 'required'
             ]);
 
             if ($validator->fails()) {
@@ -230,27 +281,61 @@ class HomeController extends BaseController
                     $bookingArr['escort_id'] = $input['escort_id'];
                     $bookingArr['user_id'] = $input['user_id'];
                     $bookingArr['hotel_name'] = $input['hotel_name'];
-                    $bookingArr['room_number'] = $input['room_number'];
+                    $bookingArr['room_number'] = '';
                     $bookingArr['selected_word'] = $input['selected_word'];
                     $bookingArr['hourly_price'] = $checkEscorts->hourly_price;
                     $bookingArr['booking_price'] = ($checkEscorts->hourly_price * count(explode(',', $input['slot_ids'])));
         
                     $lastBooking = EscortsBookings::create($bookingArr);
-        
-                    $getSlot = EscortsAvailability::where('user_id', $input['escort_id'])
+
+                    if($input['slot_duration'] == '2')
+                    {
+                        $firstSlot = EscortsAvailability::where('id', $input['slot_ids'])->first();
+                        if($firstSlot)
+                        {
+                            $secondSlot = EscortsAvailability::where('available_time', date('H:i:s', (strtotime($firstSlot->available_time) + 3600)))
+                                                                ->where('user_id', $input['escort_id'])
+                                                                ->where('available_date', $input['booking_date'])
+                                                                ->first();
+                            if($secondSlot)
+                            {
+                                $slotIds = [$firstSlot->id, $secondSlot->id];
+                                
+                                $getSlot = EscortsAvailability::where('user_id', $input['escort_id'])
+                                                    ->where('available_date', $input['booking_date'])
+                                                    ->whereIn('id', $slotIds)
+                                                    ->get();
+
+                                foreach ($getSlot as $key => $value) 
+                                {
+                                    $bookSlot = [];
+                                    $bookSlot['escort_id'] = $input['escort_id'];
+                                    $bookSlot['booking_id'] = $lastBooking->id;
+                                    $bookSlot['booking_date'] = $input['booking_date'];
+                                    $bookSlot['booking_time'] = date('H:i:s', strtotime($value['available_time']));
+                    
+                                    BookingSlot::create($bookSlot);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        $getSlot = EscortsAvailability::where('user_id', $input['escort_id'])
                                                     ->where('available_date', $input['booking_date'])
                                                     ->whereIn('id', explode(',', $input['slot_ids']))
                                                     ->get();
-        
-                    foreach ($getSlot as $key => $value) 
-                    {
-                        $bookSlot = [];
-                        $bookSlot['escort_id'] = $input['escort_id'];
-                        $bookSlot['booking_id'] = $lastBooking->id;
-                        $bookSlot['booking_date'] = $input['booking_date'];
-                        $bookSlot['booking_time'] = date('H:i:s', strtotime($value['available_time']));
-        
-                        BookingSlot::create($bookSlot);
+
+                        foreach ($getSlot as $key => $value) 
+                        {
+                            $bookSlot = [];
+                            $bookSlot['escort_id'] = $input['escort_id'];
+                            $bookSlot['booking_id'] = $lastBooking->id;
+                            $bookSlot['booking_date'] = $input['booking_date'];
+                            $bookSlot['booking_time'] = date('H:i:s', strtotime($value['available_time']));
+            
+                            BookingSlot::create($bookSlot);
+                        }
                     }
         
                     return $this->sendResponse($lastBooking, 'Escorts booking confirmed successfully.');
