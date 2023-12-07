@@ -835,6 +835,11 @@ h6 {
   background: #ffecdf;
 }
 
+.dashboard .client-card .card-icon {
+  color: #0dcaf0;
+  background: #f6f9ff;
+}
+
 /* Activity */
 .dashboard .activity {
   font-size: 14px;

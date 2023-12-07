@@ -28,7 +28,7 @@
                         </div>
                     </td>
                     <td>{{ $booking->selected_word }}</td>
-                    <td>{{ $booking->bookingSlots[0]->booking_date }}</td>
+                    <td>{{ isset($booking->bookingSlots[0]) ? $booking->bookingSlots[0]->booking_date : '-' }}</td>
                     <td>
                         <div>
                             @if(count($booking->bookingSlots) > 0)

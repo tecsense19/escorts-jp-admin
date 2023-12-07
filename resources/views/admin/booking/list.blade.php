@@ -26,7 +26,7 @@
                     <td>
                         <div class="">
                             <div><b>Hotel Name:</b> {{ $booking->hotel_name }}</div>
-                            <div><b>Room No.:</b> {{ $booking->room_number }}</div>
+                            <!-- <div><b>Room No.:</b> {{ $booking->room_number }}</div> -->
                         </div>
                     </td>
                     <td>{{ $booking->selected_word }}</td>

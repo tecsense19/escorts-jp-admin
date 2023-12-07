@@ -51,11 +51,12 @@ class BookingController extends Controller
                                                     $subQuery->where('name', 'like', '%' . $search . '%');
                                                 });
                                             })
+                                            ->orderBy('id', 'desc')
                                             ->paginate(15);
         }
         else
         {
-            $getBookingList = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])->paginate(15);
+            $getBookingList = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])->orderBy('id', 'desc')->paginate(15);
         }
 
         return view('admin.booking.list', compact('getBookingList'));

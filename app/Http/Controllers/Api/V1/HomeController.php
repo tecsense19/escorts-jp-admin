@@ -98,12 +98,15 @@ class HomeController extends BaseController
             $userId = isset($input['user_id']) ? $input['user_id'] : '';
             $filter = isset($input['filter']) ? $input['filter'] : '';
 
-            $getEscortsList = User::select('users.*')
+            $getEscortsList = User::select('users.*', 'coun.name as country_name', 's.name as state_name', 'c.name as city_name')
                     ->selectRaw('(CASE WHEN favourite_escorts.escort_id IS NOT NULL THEN 1 ELSE 0 END) AS is_favourite')
                     ->leftJoin('favourite_escorts', function ($join) use ($userId) {
                         $join->on('users.id', '=', 'favourite_escorts.escort_id')
                             ->where('favourite_escorts.user_id', $userId);
                     })
+                    ->leftJoin('countries as coun', 'coun.id', 'users.country')
+                    ->leftJoin('states as s', 's.id', 'users.state')
+                    ->leftJoin('cities as c', 'c.id', 'users.city')
                     ->with('escortImages', 'escortVideos')
                     ->when($filter == 'is_favourite', function ($query) use ($userId) {
                         $query->where('favourite_escorts.user_id', $userId);
