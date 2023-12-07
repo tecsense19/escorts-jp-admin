@@ -5,8 +5,7 @@
             <th scope="col">User Mobile No.</th>
             <th scope="col">Hotel Details</th>
             <th scope="col">Word</th>
-            <th scope="col">Booking Date</th>
-            <th scope="col">Booking Time</th>
+            <th scope="col">Booking Details</th>
             <th scope="col">Booking Price</th>
             <th scope="col">Created At</th>
             <th scope="col" class="text-center">Action</th>
@@ -28,10 +27,11 @@
                         </div>
                     </td>
                     <td>{{ $booking->selected_word }}</td>
-                    <td>{{ isset($booking->bookingSlots[0]) ? $booking->bookingSlots[0]->booking_date : '-' }}</td>
                     <td>
                         <div>
                             @if(count($booking->bookingSlots) > 0)
+                                <div><b>Date: </b>{{ date('d-m-Y', strtotime($booking->bookingSlots[0]->booking_date)) }}</div>
+                                <div><b>Time: </b></div>
                                 @foreach($booking->bookingSlots as $slot)
                                     <div>{{ date('H:i', strtotime($slot->booking_time)) }} - {{ date('H:i A', strtotime($slot->booking_time . ' +1 hour')) }}</div>
                                 @endforeach
@@ -39,10 +39,10 @@
                         </div>
                     </td>
                     <td>{{ $booking->booking_price }}</td>
-                    <td>{{ date('Y-m-d', strtotime($booking->created_at)) }}</td>
+                    <td>{{ date('d-m-Y', strtotime($booking->created_at)) }}</td>
                     <td class="text-center">
                         <div class="d-flex justify-content-center">
-                            <div class="me-2" role="button" onclick="deleteBooking('{{ $bookingId }}')" title="delete"><i class="bi bi-trash"></i></div>
+                            <div class="me-2" role="button" onclick="deleteBooking('{{ $bookingId }}')" title="Delete"><i class="bi bi-trash"></i></div>
                         </div>
                     </td>
                 </tr>

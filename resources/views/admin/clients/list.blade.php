@@ -18,13 +18,13 @@
                     <th scope="row">{{ ($key + 1)  }}</th>
                     <td>{{ $client->mobile_no }}</td>
                     <td>
-                        <div><b>Past Booking: </b><span class="badge bg-danger">0</span></div>
-                        <div><b>UpComing Booking: </b><span class="badge bg-success">0</span></div>
+                        <div><span class="badge border-danger border-1 text-danger">Past Booking: </span><span class="badge bg-danger">{{ $client->past_booking }}</span></div>
+                        <div><span class="badge border-success border-1 text-success">UpComing Booking: </span><span class="badge bg-success">{{ $client->upcoming_booking }}</span></div>
                     </td>
-                    <td>{{ date('Y-m-d', strtotime($client->created_at)) }}</td>
+                    <td>{{ date('d-m-Y', strtotime($client->created_at)) }}</td>
                     <td class="text-center">
                         <div class="d-flex justify-content-center">
-                            <div class="me-2" role="button" onclick="deleteClient('{{ $clientId }}')" title="delete"><i class="bi bi-trash"></i></div>
+                            <div class="me-2" role="button" onclick="deleteClient('{{ $clientId }}')" title="Delete"><i class="bi bi-trash"></i></div>
                         </div>
                     </td>
                 </tr>

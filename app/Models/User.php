@@ -69,4 +69,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(FavouriteEscorts::class, 'escort_id', 'id');
     }
+
+    public function escortsBookings()
+    {
+        return $this->hasMany(EscortsBookings::class, 'user_id', 'id');
+    }
 }

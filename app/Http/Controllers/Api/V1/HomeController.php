@@ -8,6 +8,7 @@ use App\Models\Cities;
 use App\Models\Countries;
 use App\Models\BookingSlot;
 use App\Models\ProfileImages;
+use App\Models\LanguageString;
 use App\Models\EscortsBookings;
 use App\Models\FavouriteEscorts;
 use App\Models\EscortsAvailability;
@@ -415,6 +416,70 @@ class HomeController extends BaseController
             $getCityList = Cities::where('state_id', $input['state_id'])->get();
 
             return $this->sendResponse($getCityList, 'City list get successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    public function bookingList(Request $request)
+    {
+        try {
+            $input = $request->all();
+
+            $getBookingList = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])
+                                            ->where(function ($query) use ($input) {
+                                                if (isset($input['escort_id']) && $input['escort_id'] != '') {
+                                                    $query->where('escort_id', $input['escort_id']);
+                                                }
+
+                                                if (isset($input['user_id']) && $input['user_id'] != '') {
+                                                    $query->where('user_id', $input['user_id']);
+                                                }
+                                            })
+                                            ->where(function ($query) use ($input) {
+                                                if ($input['filter'] == 'past') {
+                                                    $query->whereHas('bookingSlots', function ($subQuery) {
+                                                        $subQuery->where('booking_date', '<', date('Y-m-d'));
+                                                    });
+                                                }
+
+                                                if ($input['filter'] == 'upcoming') {
+                                                    $query->whereHas('bookingSlots', function ($subQuery) {
+                                                        $subQuery->where('booking_date', '>=', date('Y-m-d'));
+                                                    });
+                                                }
+                                            })
+                                            ->orderBy('id', 'desc')
+                                            ->get();
+            foreach ($getBookingList as $key => $value) 
+            {
+                foreach ($value->bookingSlots as $key => $slot) 
+                {
+                    $slot->from_time = date('H:i', strtotime($slot->booking_time));
+                    $slot->to_time = date('H:i', (strtotime($slot->booking_time) + 3600));
+                }
+            }
+
+            return $this->sendResponse($getBookingList, 'Booking list get successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    public function getAllString(Request $request)
+    {
+        try {
+            $input = $request->all();
+
+            $getStringList = LanguageString::get();
+
+            // Transform the data
+            $result = [];
+            foreach ($getStringList as $item) {
+                $result[$item['lang_key']] = $item['lang_value'];
+            }
+
+            return $this->sendResponse($result, 'All string get successfully.');
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
         }

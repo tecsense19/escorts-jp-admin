@@ -25,16 +25,16 @@
                     <td>{{ $user->age }}</td>
                     <td>
                         <div>
-                            <select class="form-control change-status" name="change_status" id="change_status" data-id="{{ $userId }}" data-status="{{ $user->status }}">
+                            <select class="form-control change-status minimal" name="change_status" id="change_status" data-id="{{ $userId }}" data-status="{{ $user->status }}">
                                 <option value="1" @if($user->status == '1') {{ 'selected' }} @endif>Active</option>
                                 <option value="0" @if($user->status == '0') {{ 'selected' }} @endif>In-Active</option>
                             </select>
                         </div>
                     </td>
-                    <td>{{ date('Y-m-d', strtotime($user->created_at)) }}</td>
+                    <td>{{ date('d-m-Y', strtotime($user->created_at)) }}</td>
                     <td class="text-center">
                         <div class="d-flex justify-content-center">
-                            <div class="me-2" role="button"><a href="{{ route('admin.view.escorts', ['user_id' => $userId]) }}" title="Availability"><i class="bi bi-eye" style="color: #000000;"></i></a></div>
+                            <div class="me-2" role="button"><a href="{{ route('admin.view.escorts', ['user_id' => $userId]) }}" title="View"><i class="bi bi-eye" style="color: #000000;"></i></a></div>
                             <div class="me-2" role="button"><a href="{{ route('admin.edit.escorts', ['user_id' => $userId]) }}" title="Edit"><i class="bi bi-pencil-square" style="color: #000000;"></i></a></div>
                             <div class="me-2" role="button" onclick="deleteEscortsProfile('{{ $userId }}')" title="Delete"><i class="bi bi-trash"></i></div>
                             <div class="me-2" role="button"><a href="{{ route('admin.calendar.event', ['user_id' => $userId]) }}" title="Availability"><i class="bi bi-calendar" style="color: #000000;"></i></a></div>

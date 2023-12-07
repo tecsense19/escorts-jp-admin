@@ -36,18 +36,34 @@ class ClientsController extends Controller
 
         $search = $input['search'];
 
-        if(isset($search) && $search != '')
+        $clientsList = User::where('user_role', 'client')
+                        ->when(isset($search) && $search != '', function ($query) use ($search) {
+                            $query->where('mobile_no', 'like', '%' . $search . '%');
+                        })
+                        ->orderBy('id', 'desc')
+                        ->paginate(15);
+
+        foreach ($clientsList as $key => $value) 
         {
-            $clientsList = User::where('user_role', 'client')
-                            ->where(function ($query) use ($search) {
-                                $query->where('mobile_no', 'like', '%' . $search . '%');
-                            })
-                            ->orderBy('id', 'desc')
-                            ->paginate(15);
-        }
-        else
-        {
-            $clientsList = User::where('user_role', 'client')->orderBy('id', 'desc')->paginate(15);
+            $getPastBooking = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])
+                                        ->where(function ($query) {
+                                            $query->whereHas('bookingSlots', function ($subQuery) {
+                                                $subQuery->where('booking_date', '<', date('Y-m-d'));
+                                            });
+                                        })
+                                        ->where('user_id', $value->id)
+                                        ->count();
+            $getUpcomingBooking = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])
+                                        ->where(function ($query) {
+                                            $query->whereHas('bookingSlots', function ($subQuery) {
+                                                $subQuery->where('booking_date', '>=', date('Y-m-d'));
+                                            });
+                                        })
+                                        ->where('user_id', $value->id)
+                                        ->count();
+
+            $value->past_booking = $getPastBooking;
+            $value->upcoming_booking = $getUpcomingBooking;
         }
 
         return view('admin.clients.list', compact('clientsList'));

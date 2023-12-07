@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\EscortsController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\ClientsController;
+use App\Http\Controllers\Admin\LanguageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +61,11 @@ Route::group(['middleware' => ['admin']], function () {
     Route::get('/clients', [ClientsController::class, 'index'])->name('admin.clients');
     Route::post('/clients/list', [ClientsController::class, 'listClients'])->name('admin.clients.list');
     Route::post('/clients/delete', [ClientsController::class, 'deleteClient'])->name('admin.clients.delete');
+
+    Route::get('/language', [LanguageController::class, 'index'])->name('admin.language');
+    Route::post('/language/list', [LanguageController::class, 'languageList'])->name('admin.language.list');
+    Route::post('/language/delete', [LanguageController::class, 'languageDelete'])->name('admin.language.delete');
+    Route::post('/language/save', [LanguageController::class, 'saveString'])->name('admin.save.string');
 });
 
 Route::get('/clear-cache', function () {
