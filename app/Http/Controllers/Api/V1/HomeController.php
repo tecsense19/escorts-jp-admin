@@ -203,7 +203,7 @@ class HomeController extends BaseController
 
             $filteredSlots = collect();
 
-            if($slotDuration == 2)
+            if($slotDuration == "2")
             {
                 $twoHourSlots = EscortsAvailability::select(
                                     'ea1.id',
