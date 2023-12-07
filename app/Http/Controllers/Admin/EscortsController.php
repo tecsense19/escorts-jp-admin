@@ -382,11 +382,12 @@ class EscortsController extends Controller
                                                     });
                                                 }
                                             })
+                                            ->orderBy('id', 'desc')
                                             ->paginate(15);
         }
         else
         {
-            $getBookingList = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])->paginate(15);
+            $getBookingList = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])->orderBy('id', 'desc')->paginate(15);
         }
 
         return view('admin.escorts.booking_list', compact('getBookingList'));

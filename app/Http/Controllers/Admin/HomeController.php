@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Countries;
 use App\Models\States;
 use App\Models\Cities;
+use App\Models\EscortsBookings;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -21,7 +22,23 @@ class HomeController extends Controller
      */
     public function index(): View
     {
-        return view('admin.dashboard.dashboard');
+        $escortCount = User::where('user_role', 'escorts')->count();
+        $clientsCount = User::where('user_role', 'client')->count();
+        $pastBooking = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])
+                                        ->where(function ($query) {
+                                            $query->whereHas('bookingSlots', function ($subQuery) {
+                                                $subQuery->where('booking_date', '<', date('Y-m-d'));
+                                            });
+                                        })
+                                        ->count();
+        $upComingBooking = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])
+                                        ->where(function ($query) {
+                                            $query->whereHas('bookingSlots', function ($subQuery) {
+                                                $subQuery->where('booking_date', '>=', date('Y-m-d'));
+                                            });
+                                        })
+                                        ->count();
+        return view('admin.dashboard.dashboard', compact('escortCount', 'clientsCount', 'pastBooking', 'upComingBooking'));
     }
 
     public function profile(): View

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\EscortsController;
 use App\Http\Controllers\Admin\BookingController;
+use App\Http\Controllers\Admin\ClientsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +56,10 @@ Route::group(['middleware' => ['admin']], function () {
     Route::get('/bookings', [BookingController::class, 'index'])->name('admin.booking');
     Route::post('/bookings/list', [BookingController::class, 'bookingList'])->name('admin.booking.list');
     Route::post('/bookings/delete', [BookingController::class, 'bookingDelete'])->name('admin.booking.delete');
+
+    Route::get('/clients', [ClientsController::class, 'index'])->name('admin.clients');
+    Route::post('/clients/list', [ClientsController::class, 'listClients'])->name('admin.clients.list');
+    Route::post('/clients/delete', [ClientsController::class, 'deleteClient'])->name('admin.clients.delete');
 });
 
 Route::get('/clear-cache', function () {

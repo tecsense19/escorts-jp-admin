@@ -56,20 +56,20 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-4 col-md-4 label">Country:</div>
-                                <div class="col-lg-8 col-md-8">{{ $getUserDetails->country }}</div>
+                                <div class="col-lg-8 col-md-8">{{ $getUserDetails->country_name }}</div>
                             </div>
                             <div class="row">
                                 <div class="col-lg-4 col-md-4 label">State:</div>
-                                <div class="col-lg-8 col-md-8">{{ $getUserDetails->state }}</div>
+                                <div class="col-lg-8 col-md-8">{{ $getUserDetails->state_name }}</div>
                             </div>
                             <div class="row">
                                 <div class="col-lg-4 col-md-4 label">City:</div>
-                                <div class="col-lg-8 col-md-8">{{ $getUserDetails->city }}</div>
+                                <div class="col-lg-8 col-md-8">{{ $getUserDetails->city_name }}</div>
                             </div>
-                            <div class="row">
+                            <!-- <div class="row">
                                 <div class="col-lg-4 col-md-4 label">Address:</div>
                                 <div class="col-lg-8 col-md-8">{{ $getUserDetails->address }}</div>
-                            </div>
+                            </div> -->
                             <div class="row">
                                 <div class="col-lg-4 col-md-4 label">Whatsapp No.:</div>
                                 <div class="col-lg-8 col-md-8">{{ $getUserDetails->mobile_no }}</div>

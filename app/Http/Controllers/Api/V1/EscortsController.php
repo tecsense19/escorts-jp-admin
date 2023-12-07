@@ -44,9 +44,9 @@ class EscortsController extends BaseController
                 'email' => isset($input['user_id']) && $input['user_id'] != ''
                     ? 'required|unique:users,email,' . $input['user_id']
                     : 'required|unique:users,email',
-                'password' => isset($input['user_id']) && $input['user_id'] == ''
-                    ? 'required'
-                    : '',
+                // 'password' => isset($input['user_id']) && $input['user_id'] == ''
+                //     ? 'required'
+                //     : '',
             ]);
         
             if ($validator->fails()) {
@@ -75,7 +75,7 @@ class EscortsController extends BaseController
             }
             else
             {
-                $userData['password'] = Hash::make($input['password']);
+                // $userData['password'] = Hash::make($input['password']);
                 $userData['user_role'] = 'escorts';
                 
                 $lastUser = User::create($userData);
@@ -214,7 +214,13 @@ class EscortsController extends BaseController
                 return $this->sendError($validator->errors()->first());
             }
 
-            $getUserDetails = User::where('id', $input['user_id'])->where('user_role', 'escorts')->with('escortImages')->with('escortVideos')->first();
+            $getUserDetails = User::select('users.*', 'coun.name as country_name', 's.name as state_name', 'c.name as city_name')->where('users.id', $input['user_id'])->where('user_role', 'escorts')
+                                    ->with('escortImages')
+                                    ->with('escortVideos')
+                                    ->leftJoin('countries as coun', 'coun.id', 'users.country')
+                                    ->leftJoin('states as s', 's.id', 'users.state')
+                                    ->leftJoin('cities as c', 'c.id', 'users.city')
+                                    ->first();
 
             return $this->sendResponse($getUserDetails, 'Profile get successfully.');
         } catch (\Exception $e) {

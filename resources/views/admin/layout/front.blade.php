@@ -40,6 +40,10 @@
           color: red !important;
           font-size: 14px;
       }
+
+      .main {
+        height: 100vh;
+      }
     </style>
 </head>
 
