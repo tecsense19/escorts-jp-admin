@@ -205,16 +205,23 @@ class HomeController extends BaseController
 
             if($slotDuration == 2)
             {
-                $twoHourSlots = EscortsAvailability::select('escorts_availability.id', 'escorts_availability.start_time', 'escorts_availability.end_time', 'escorts_availability.available_date', 'escorts_availability.available_time', 'escorts_availability.user_id')
-                                                    ->where('escorts_availability.user_id', $escort_id)
-                                                    ->where('escorts_availability.available_date', $selected_date)
-                                                    ->join('escorts_availability as next_slot', 'next_slot.start_time', '=', 'escorts_availability.end_time')
-                                                    ->select('escorts_availability.id', 'escorts_availability.start_time', 'next_slot.end_time', 'escorts_availability.available_date', 'escorts_availability.available_time', 'escorts_availability.user_id')
-                                                    ->whereRaw("TIMEDIFF(next_slot.end_time, escorts_availability.start_time) = '2:00:00'") // 1 hour
-                                                    ->whereNotIn('escorts_availability.start_time', $getBookedSlot)
-                                                    ->whereNotIn('escorts_availability.end_time', $getBookedSlot)
-                                                    ->orderBy('escorts_availability.start_time', 'asc')
-                                                    ->get();
+                $twoHourSlots = EscortsAvailability::select(
+                                    'ea1.id',
+                                    'ea1.start_time',
+                                    'ea2.end_time',
+                                    'ea1.available_date',
+                                    'ea1.available_time',
+                                    'ea1.user_id'
+                                )
+                                ->from('escorts_availability as ea1')
+                                ->join('escorts_availability as ea2', 'ea2.start_time', '=', 'ea1.end_time')
+                                ->where('ea1.user_id', $escort_id)
+                                ->where('ea1.available_date', $selected_date)
+                                ->whereRaw("TIMEDIFF(ea2.end_time, ea1.start_time) = '02:00:00'")
+                                ->whereNotIn('ea1.start_time', $getBookedSlot)
+                                ->whereNotIn('ea2.end_time', $getBookedSlot)
+                                ->orderBy('ea1.start_time', 'asc')
+                                ->get();
 
                 foreach ($twoHourSlots as $index => $slot) {
                     // If it's the first slot or there's no overlap with the previous slot, add it to the filtered collection
@@ -224,8 +231,8 @@ class HomeController extends BaseController
                             'user_id' => $slot->user_id,
                             'available_date' => $slot->available_date,
                             'available_time' => $slot->available_time,
-                            'start_time' => $slot->start_time,
-                            'end_time' => $slot->end_time,
+                            'start_time' => date('H:i', strtotime($slot->start_time)),
+                            'end_time' => date('H:i', strtotime($slot->end_time)),
                         ]);
                     }
                 }
@@ -239,8 +246,8 @@ class HomeController extends BaseController
                         'user_id' => $value['user_id'],
                         'available_date' => $value['available_date'],
                         'available_time' => $value['available_time'],
-                        'start_time' => date('H:i:s', strtotime($value['start_time'])),
-                        'end_time' => date('H:i:s', strtotime($value['end_time'])),
+                        'start_time' => date('H:i', strtotime($value['start_time'])),
+                        'end_time' => date('H:i', strtotime($value['end_time'])),
                     ]);
                 }
             }
