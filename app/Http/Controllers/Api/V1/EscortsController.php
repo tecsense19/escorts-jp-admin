@@ -214,7 +214,7 @@ class EscortsController extends BaseController
                 return $this->sendError($validator->errors()->first());
             }
 
-            $getUserDetails = User::select('users.*', 'coun.name as country_name', 's.name as state_name', 'c.name as city_name')->where('users.id', $input['user_id'])->where('user_role', 'escorts')
+            $getUserDetails = User::select('users.*', 'coun.name as country_name', 's.name as state_name', 'c.name as city_name')->where('users.id', $input['user_id'])
                                     ->with('escortImages')
                                     ->with('escortVideos')
                                     ->leftJoin('countries as coun', 'coun.id', 'users.country')

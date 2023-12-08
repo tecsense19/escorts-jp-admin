@@ -36,6 +36,12 @@
                 <span>Clients</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->is('language') ? '' : 'collapsed' }}" href="{{ route('admin.language') }}">
+            <i class="bi bi-translate"></i>
+                <span>All String</span>
+            </a>
+        </li>
         <!-- End Dashboard Nav -->
         <!-- <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">

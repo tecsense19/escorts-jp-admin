@@ -41,9 +41,9 @@
           font-size: 14px;
       }
 
-      .main {
+      /* .main {
         height: 100vh;
-      }
+      } */
     </style>
 </head>
 

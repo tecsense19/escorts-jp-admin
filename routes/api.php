@@ -30,6 +30,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('/city/list', [HomeController::class, 'cityList']);
     Route::post('/escorts/date/wise/availability', [HomeController::class, 'getDateWiseAvailability']);
     Route::post('/escorts/booking', [HomeController::class, 'escortsBooking']);
+    Route::post('/booking/list', [HomeController::class, 'bookingList']);
 
     Route::post('/register', [EscortsController::class, 'register']);
     Route::post('/escort/login', [EscortsController::class, 'login']);
@@ -39,4 +40,6 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('/escort/forgot/password', [EscortsController::class, 'forgotPassword']);
 
     Route::post('/favourite/escort', [EscortsController::class, 'favouriteEscorts']);
+
+    Route::post('/get/all/string', [HomeController::class, 'getAllString']);
 });
