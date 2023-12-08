@@ -246,13 +246,31 @@ class EscortsController extends Controller
         return view('admin.escorts.calendar', compact('userId'));
     }
 
+    function getDatesBetween($startDate, $endDate) {
+        $dates = array();
+    
+        $currentDate = strtotime($startDate);
+        $endDate = strtotime($endDate);
+    
+        while ($currentDate <= $endDate) {
+            $dates[] = date('Y-m-d', $currentDate);
+            $currentDate = strtotime('+1 day', $currentDate);
+        }
+    
+        return $dates;
+    }
+
     public function availabilityAdd(Request $request)
     {
         $input = $request->all();
 
         $availableDate = date('Y-m-d', strtotime($input['date']));
+        $fromDate = date('Y-m-d', strtotime($input['from_date']));
+        $toDate = date('Y-m-d', strtotime($input['to_date']));
         $availableSlot = $input['available_slot'];
         $userId = Crypt::decryptString($input['user_id']);
+
+        $allDates = $this->getDatesBetween($fromDate, $toDate);
 
         $explodeSlot = [];
         if($availableSlot)
@@ -273,28 +291,31 @@ class EscortsController extends Controller
 
         for ($i=0; $i < count($explodeSlot); $i++) 
         {
-            $availableArr = [];
-            $availableArr['user_id'] = $userId;
-            $availableArr['available_date'] = $availableDate;
-            $availableArr['available_time'] = date('H:i:s', strtotime($explodeSlot[$i]));
-            $availableArr['start_time'] = date('H:i:s', strtotime($explodeSlot[$i]));
-            $availableArr['end_time'] = date('H:i:s', strtotime($explodeSlot[$i]) + 3600);
-
-            $checkAvailable = EscortsAvailability::where('user_id', $userId)
-                                                ->where('available_date', $availableDate)
-                                                ->where('available_time', date('H:i:s', strtotime($explodeSlot[$i])))
-                                                ->first();
-            
-            if($checkAvailable)
+            foreach ($allDates as $key => $dates) 
             {
-                EscortsAvailability::where('user_id', $userId)
-                                    ->where('available_date', $availableDate)
-                                    ->where('available_time', date('H:i:s', strtotime($explodeSlot[$i])))
-                                    ->update($availableArr);
-            }
-            else
-            {
-                EscortsAvailability::create($availableArr);
+                $availableArr = [];
+                $availableArr['user_id'] = $userId;
+                $availableArr['available_date'] = $dates;
+                $availableArr['available_time'] = date('H:i:s', strtotime($explodeSlot[$i]));
+                $availableArr['start_time'] = date('H:i:s', strtotime($explodeSlot[$i]));
+                $availableArr['end_time'] = date('H:i:s', strtotime($explodeSlot[$i]) + 3600);
+    
+                $checkAvailable = EscortsAvailability::where('user_id', $userId)
+                                                    ->where('available_date', $dates)
+                                                    ->where('available_time', date('H:i:s', strtotime($explodeSlot[$i])))
+                                                    ->first();
+                
+                if($checkAvailable)
+                {
+                    EscortsAvailability::where('user_id', $userId)
+                                        ->where('available_date', $dates)
+                                        ->where('available_time', date('H:i:s', strtotime($explodeSlot[$i])))
+                                        ->update($availableArr);
+                }
+                else
+                {
+                    EscortsAvailability::create($availableArr);
+                }                
             }
         }
         return response()->json(['success' => true, 'message' => 'Escorts availability created successfully.']);
