@@ -337,6 +337,7 @@ class EscortsController extends Controller
                 'year' => (int)date('Y', strtotime($value['available_date'])),
                 'month' => (int)date('m', strtotime($value['available_date'])),
                 'day' => (int)date('d', strtotime($value['available_date'])),
+                'available_date' => date('Y-m-d', strtotime($value['available_date'])),
                 'cancelled' => false,
             ];
         
