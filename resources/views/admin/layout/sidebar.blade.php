@@ -24,6 +24,7 @@
                 </li>
             </ul>
         </li>
+       
         <li class="nav-item">
             <a class="nav-link {{ request()->is('bookings') ? '' : 'collapsed' }}" href="{{ route('admin.booking') }}">
             <i class="bi bi-bag"></i>
@@ -42,6 +43,26 @@
                 <span>All String</span>
             </a>
         </li>
+
+        <li class="nav-item">
+            <a class="nav-link" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#" aria-expanded="{{ request()->is('settings/privacy') || request()->is('settings/terms') ? 'true' : 'false' }}">
+            <i class="bi bi-gear"></i><span>Settings</span><i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="components-nav" class="nav-content collapse {{ request()->is('settings/privacy')|| request()->is('settings/terms')? 'show' : '' }}" data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="{{ route ('admin.settings.privacypolicy')}}" class="{{ request()->is('settings/privacy')? 'active' : ''}}">
+                    <i class="bi bi-circle"></i><span>Privacy Policy</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.settings.termcondition') }}" class="{{ request()->is('settings/terms')? 'active' : ''}}">
+                    <i class="bi bi-circle"></i><span>Terms Conditions</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+       
         <!-- End Dashboard Nav -->
         <!-- <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">

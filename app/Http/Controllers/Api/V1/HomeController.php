@@ -497,5 +497,12 @@ class HomeController extends BaseController
             return $this->sendError($e->getMessage());
         }
     }
+
+    function terms_privacypolicy(){
+        $result = [];
+        $result['terms_condition_link'] = url('/').'/'.'termscondition/';
+        $result['privacy_policy_link'] = url('/').'/'.'privacypolicy/';
+        return $this->sendResponse($result, ' list get successfully.');
+    }
 }
 

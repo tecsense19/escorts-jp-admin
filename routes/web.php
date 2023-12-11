@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\EscortsController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\ClientsController;
 use App\Http\Controllers\Admin\LanguageController;
+use App\Http\Controllers\Admin\SettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +67,16 @@ Route::group(['middleware' => ['admin']], function () {
     Route::post('/language/list', [LanguageController::class, 'languageList'])->name('admin.language.list');
     Route::post('/language/delete', [LanguageController::class, 'languageDelete'])->name('admin.language.delete');
     Route::post('/language/save', [LanguageController::class, 'saveString'])->name('admin.save.string');
+
+
+    Route::get('/settings/privacy', [SettingsController::class, 'index'])->name('admin.settings.privacypolicy');
+    Route::Post('/settings/privacy/save', [SettingsController::class, 'saveprivacy'])->name('admin.save.privacypolicy');
+
+    Route::get('/settings/terms', [SettingsController::class, 'termindex'])->name('admin.settings.termcondition');
+    Route::Post('/settings/terms/save', [SettingsController::class, 'saveterm'])->name('admin.save.termcondition');
+
+    Route::get('/privacypolicy',[SettingsController::class, 'privacypolicy'])->name('privacypolicy');
+    Route::get('/termscondition',[SettingsController::class, 'termscondition'])->name('termscondition');
 });
 
 Route::get('/clear-cache', function () {

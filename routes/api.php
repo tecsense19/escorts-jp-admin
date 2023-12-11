@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\HomeController;
 use App\Http\Controllers\Api\V1\EscortsController;
+use App\Http\Controllers\Api\V1\SettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,4 +43,6 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('/favourite/escort', [EscortsController::class, 'favouriteEscorts']);
 
     Route::post('/get/all/string', [HomeController::class, 'getAllString']);
+
+    Route::post('/terms-privacypolicy/list', [HomeController::class, 'terms_privacypolicy']);
 });
