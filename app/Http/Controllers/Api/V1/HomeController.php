@@ -157,7 +157,7 @@ class HomeController extends BaseController
 
             $getAvailability = EscortsAvailability::where('user_id', $escort_id)
                                                     ->where('available_date', $selected_date)
-                                                    ->where('start_time', '>=', date('H:i:s'))
+                                                    // ->where('start_time', '>=', date('H:i:s'))
                                                     ->whereNotIn('available_time', $getBookedSlot)
                                                     ->orderBy('available_time', 'asc')
                                                     ->get()->toArray();
@@ -233,7 +233,7 @@ class HomeController extends BaseController
                                 ->join('escorts_availability as ea2', 'ea2.start_time', '=', 'ea1.end_time')
                                 ->where('ea1.user_id', $escort_id)
                                 ->where('ea1.available_date', $selected_date)
-                                ->where('ea1.start_time', '>=', date('H:i:s'))
+                                // ->where('ea1.start_time', '>=', date('H:i:s'))
                                 ->whereRaw("TIMEDIFF(ea2.end_time, ea1.start_time) = '02:00:00'")
                                 ->whereNotIn('ea1.start_time', $getBookedSlot)
                                 ->whereNotIn('ea2.end_time', $getBookedSlot)
