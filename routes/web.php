@@ -75,9 +75,10 @@ Route::group(['middleware' => ['admin']], function () {
     Route::get('/settings/terms', [SettingsController::class, 'termindex'])->name('admin.settings.termcondition');
     Route::Post('/settings/terms/save', [SettingsController::class, 'saveterm'])->name('admin.save.termcondition');
 
-    Route::get('/privacypolicy',[SettingsController::class, 'privacypolicy'])->name('privacypolicy');
-    Route::get('/termscondition',[SettingsController::class, 'termscondition'])->name('termscondition');
 });
+
+Route::get('/privacypolicy',[SettingsController::class, 'privacypolicy'])->name('privacypolicy');
+Route::get('/termscondition',[SettingsController::class, 'termscondition'])->name('termscondition');
 
 Route::get('/clear-cache', function () {
     Artisan::call('cache:clear');

@@ -83,7 +83,7 @@ class HomeController extends BaseController
             }
             else
             {
-                return $this->sendError('Invalid otp or mobile number.');
+                return $this->sendError('Invalid OTP.');
             }
 
         } catch (\Exception $e) {
