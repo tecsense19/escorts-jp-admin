@@ -514,6 +514,7 @@ class HomeController extends BaseController
 
             $validator = Validator::make($input, [
                 'user_id' => 'required',
+                'old_mobile_no' => 'required',
                 'mobile_no' => 'required',
             ]);
         
@@ -521,22 +522,30 @@ class HomeController extends BaseController
                 return $this->sendError($validator->errors()->first());
             }
 
-            $checkUser = User::where('id', $input['user_id'])->first();
+            $checkUser = User::where('id', $input['user_id'])->where('mobile_no', $input['old_mobile_no'])->first();
 
             if($checkUser)
             {
-                $updateArr = [];
-                $updateArr['mobile_no'] = $input['mobile_no'];
+                $checkNewNumber = User::where('id', '!=', $input['user_id'])->where('mobile_no', $input['mobile_no'])->first();
+                if(!$checkNewNumber)
+                {
+                    $updateArr = [];
+                    $updateArr['mobile_no'] = $input['mobile_no'];
 
-                User::where('id', $input['user_id'])->update($updateArr);
+                    User::where('id', $input['user_id'])->update($updateArr);
 
-                $userDetails = User::where('id', $input['user_id'])->first();
+                    $userDetails = User::where('id', $input['user_id'])->first();
 
-                return $this->sendResponse($userDetails, 'Profile update successfully.');
+                    return $this->sendResponse($userDetails, 'Profile update successfully.');
+                }
+                else
+                {
+                    return $this->sendError('Mobile number already exists. Please enter another mobile number.');
+                }
             }
             else
             {
-                return $this->sendError('Invalid user.');
+                return $this->sendError('Invalid user old mobile no.');
             }
 
         } catch (\Exception $e) {
