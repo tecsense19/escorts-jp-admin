@@ -45,4 +45,6 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('/get/all/string', [HomeController::class, 'getAllString']);
 
     Route::post('/terms-privacypolicy/list', [HomeController::class, 'terms_privacypolicy']);
+
+    Route::post('/user/update/profile', [HomeController::class, 'updateProfile']);
 });

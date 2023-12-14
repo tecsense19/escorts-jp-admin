@@ -498,11 +498,50 @@ class HomeController extends BaseController
         }
     }
 
-    function terms_privacypolicy(){
+    function terms_privacypolicy(Request $request)
+    {
         $result = [];
         $result['terms_condition_link'] = url('/').'/'.'termscondition/';
         $result['privacy_policy_link'] = url('/').'/'.'privacypolicy/';
         return $this->sendResponse($result, ' list get successfully.');
+    }
+
+    function updateProfile(Request $request)
+    {
+        try {
+
+            $input = $request->all();
+
+            $validator = Validator::make($input, [
+                'user_id' => 'required',
+                'mobile_no' => 'required',
+            ]);
+        
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->first());
+            }
+
+            $checkUser = User::where('id', $input['user_id'])->first();
+
+            if($checkUser)
+            {
+                $updateArr = [];
+                $updateArr['mobile_no'] = $input['mobile_no'];
+
+                User::where('id', $input['user_id'])->update($updateArr);
+
+                $userDetails = User::where('id', $input['user_id'])->first();
+
+                return $this->sendResponse($userDetails, 'Profile update successfully.');
+            }
+            else
+            {
+                return $this->sendError('Invalid user.');
+            }
+
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
     }
 }
 
