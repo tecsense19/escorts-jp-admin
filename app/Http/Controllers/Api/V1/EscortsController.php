@@ -407,6 +407,29 @@ class EscortsController extends BaseController
         }
     }
 
+    public function availabilityDelete(Request $request)
+    {
+        try {
+            $input = $request->all();
+
+            $validator = Validator::make($input, [
+                'user_id' => 'required',
+                'available_date' => 'required'
+            ]);
+        
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->first());
+            }
+
+            EscortsAvailability::where('user_id', $input['user_id'])->where('available_date', date('Y-m-d', strtotime($input['available_date'])))->delete();
+
+            return $this->sendResponse($input['user_id'], 'Availability delete successfully.');
+
+        } catch (\Exception $e) {
+            return redirect()->back()->withError($e->getMessage());
+        }
+    }
+
     public function changePassword(Request $request)
     {
         try {
