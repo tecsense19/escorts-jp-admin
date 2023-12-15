@@ -278,6 +278,9 @@
                 about: {
                     required: true,
                 },
+                age: {
+                    required: true,
+                },
                 country : {
                     required: true,
                 },
@@ -306,6 +309,9 @@
                 },
                 about: {
                     required: "About is required!",
+                },
+                age: {
+                    required: "Age is required!",
                 },
                 country : {
                     required: 'Country is required!',

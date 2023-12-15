@@ -24,7 +24,7 @@ use Validator;
 class EscortsController extends BaseController
 {
     private $globalIdsArray = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24'];
-    private $globalTimesArray = ['01:00','02:00','03:00','04:00','05:00','06:00','07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00','24:00'];
+    private $globalTimesArray = ['01:00','02:00','03:00','04:00','05:00','06:00','07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00','00:00'];
 
     public function register(Request $request)
     {
@@ -272,7 +272,7 @@ class EscortsController extends BaseController
             $timeArr = [];
 
             foreach ($timeIds as $key => $id) {
-                $timeArr[] = $this->globalTimesArray[$key];
+                $timeArr[] = $this->globalTimesArray[((int)$id-1)];
             }
 
             $allDates = $this->getDatesBetween($fromDate, $toDate);
@@ -347,13 +347,61 @@ class EscortsController extends BaseController
 
             $userId = $input['user_id'];
 
-            $availableList = EscortsAvailability::where('user_id', $userId)
+            $getAllDate = EscortsAvailability::where('user_id', $userId)
                                                 ->where('available_date', '>=', date('Y-m-d'))
                                                 ->orderBy('available_date', 'asc')
+                                                ->groupBy('available_date')
+                                                ->pluck('available_date');
+
+            $responseArr = [];
+            foreach ($getAllDate as $key => $value) 
+            {
+                $availableList = EscortsAvailability::where('user_id', $userId)
+                                                ->where('available_date', $value)
                                                 ->orderBy('available_time', 'asc')
                                                 ->get();
 
-            return $this->sendResponse($availableList, 'Availability list get successfully.');
+                $getAllTime =  EscortsAvailability::selectRaw("TIME_FORMAT(available_time, '%H:%i') as formatted_time")
+                                                ->where('user_id', $userId)
+                                                ->where('available_date', $value)
+                                                ->orderBy('available_time', 'asc')
+                                                ->pluck('formatted_time');
+
+                $findTime = [];
+                foreach ($getAllTime as $timeKey => $values) 
+                {
+                    foreach ($this->globalIdsArray as $keys => $id) {
+                        if($values == $this->globalTimesArray[$keys])
+                        {
+                            $findTime[] = [
+                                'id' => $id,
+                                'time' => $this->globalTimesArray[$keys],
+                                'from_time' => $this->globalTimesArray[$keys],
+                                'to_time' => date('H:i', strtotime($this->globalTimesArray[$keys]) + 3600),
+                            ];
+                        }
+                    }
+                }
+
+                usort($findTime, function($a, $b) {
+                    return strcmp($a['id'], $b['id']);
+                });
+
+                $newObj = new \StdClass();
+                $newObj->date = $value;
+                $newObj->slots = $findTime;
+
+                $responseArr[] = $newObj;
+            }
+
+            // $availableList = EscortsAvailability::where('user_id', $userId)
+            //                                     ->where('available_date', '>=', date('Y-m-d'))
+            //                                     ->orderBy('available_date', 'asc')
+            //                                     ->orderBy('available_time', 'asc')
+            //                                     ->get();
+            
+
+            return $this->sendResponse($responseArr, 'Availability list get successfully.');
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
         }
@@ -508,9 +556,9 @@ class EscortsController extends BaseController
             foreach ($this->globalIdsArray as $key => $id) {
                 $combinedArray[] = [
                     'id' => $id,
-                    'time' => $this->globalTimesArray[$key],
-                    'from_time' => $this->globalTimesArray[$key],
-                    'to_time' => date('H:i', strtotime($this->globalTimesArray[$key]) + 3600),
+                    'time' => $this->globalTimesArray[$id],
+                    'from_time' => $this->globalTimesArray[$id],
+                    'to_time' => date('H:i', strtotime($this->globalTimesArray[$id]) + 3600),
                 ];
             }
 

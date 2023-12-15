@@ -439,7 +439,8 @@ class HomeController extends BaseController
         try {
             $input = $request->all();
 
-            $getBookingList = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])
+            $getBookingList = EscortsBookings::join('users', 'escorts_bookings.user_id', '=', 'users.id')
+                                            ->with(['bookingSlots', 'getusers', 'getescorts'])
                                             ->where(function ($query) use ($input) {
                                                 if (isset($input['escort_id']) && $input['escort_id'] != '') {
                                                     $query->where('escort_id', $input['escort_id']);
@@ -462,7 +463,7 @@ class HomeController extends BaseController
                                                     });
                                                 }
                                             })
-                                            ->orderBy('id', 'desc')
+                                            ->orderBy('escorts_bookings.id', 'desc')
                                             ->get();
             foreach ($getBookingList as $key => $value) 
             {

@@ -40,7 +40,8 @@ class BookingController extends Controller
 
         if(isset($search) && $search != '')
         {
-            $getBookingList = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])
+            $getBookingList = EscortsBookings::join('users', 'escorts_bookings.user_id', '=', 'users.id')
+                                            ->with(['bookingSlots', 'getusers', 'getescorts'])
                                             ->where(function ($query) use ($search) {
                                                 // Search on the 'mobile_no' column of 'getusers'
                                                 $query->whereHas('getusers', function ($subQuery) use ($search) {
@@ -51,12 +52,14 @@ class BookingController extends Controller
                                                     $subQuery->where('name', 'like', '%' . $search . '%');
                                                 });
                                             })
-                                            ->orderBy('id', 'desc')
+                                            ->orderBy('escorts_bookings.id', 'desc')
                                             ->paginate(15);
         }
         else
         {
-            $getBookingList = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])->orderBy('id', 'desc')->paginate(15);
+            $getBookingList = EscortsBookings::join('users', 'escorts_bookings.user_id', '=', 'users.id')
+                                            ->with(['bookingSlots', 'getusers', 'getescorts'])
+                                            ->orderBy('escorts_bookings.id', 'desc')->paginate(15);
         }
 
         return view('admin.booking.list', compact('getBookingList'));
