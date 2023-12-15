@@ -775,6 +775,11 @@ $(document).ready(function() {
         }
     });
 
+    // Add a click event to the "prev" and "next" buttons
+    $('.fc-prev-button, .fc-next-button, .fc-today-button').click(function() {
+        getAvailabilityData()
+    });
+
     $("#myForm").submit(function(event) {
         // Prevent the default form submission behavior
         event.preventDefault();

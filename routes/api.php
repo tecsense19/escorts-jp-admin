@@ -37,6 +37,8 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('/escort/login', [EscortsController::class, 'login']);
     Route::post('/escort/profile', [EscortsController::class, 'getEscortProfile']);
     Route::post('/escort/availability/add', [EscortsController::class, 'escortAvailabilityAdd']);
+    Route::post('/escort/availability/list', [EscortsController::class, 'escortAvailabilityList']);
+    Route::post('/escort/get/timing', [EscortsController::class, 'getTiming']);
     Route::post('/escort/change/password', [EscortsController::class, 'changePassword']);
     Route::post('/escort/forgot/password', [EscortsController::class, 'forgotPassword']);
 

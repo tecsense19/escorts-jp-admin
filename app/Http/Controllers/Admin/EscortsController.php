@@ -285,7 +285,7 @@ class EscortsController extends Controller
         }
 
         EscortsAvailability::where('user_id', $userId)
-                            ->where('available_date', $availableDate)
+                            ->whereIn('available_date', $allDates)
                             ->whereNotIn('available_time', $timeArr)
                             ->delete();
 
@@ -327,7 +327,11 @@ class EscortsController extends Controller
 
         $userId = Crypt::decryptString($input['user_id']);
 
-        $availableList = EscortsAvailability::where('user_id', $userId)->where('available_date', '>=', date('Y-m-d'))->orderBy('available_time', 'asc')->get();
+        $availableList = EscortsAvailability::where('user_id', $userId)
+                                            ->where('available_date', '>=', date('Y-m-d'))
+                                            ->orderBy('available_date', 'asc')
+                                            ->orderBy('available_time', 'asc')
+                                            ->get();
 
         $responseArr = [];
         foreach ($availableList as $key => $value) {

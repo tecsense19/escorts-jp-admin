@@ -20,8 +20,8 @@
                 @endphp
                 <tr>
                     <th scope="row">{{ ($key + 1)  }}</th>
-                    <td>{{ $booking->getusers->mobile_no }}</td>
-                    <td>{{ $booking->getEscorts->name }}</td>
+                    <td>{{ isset($booking->getusers) ? $booking->getusers->mobile_no : '-' }}</td>
+                    <td>{{ isset($booking->getEscorts) ? $booking->getEscorts->name : '-' }}</td>
                     <td>
                         <div class="">
                             <div><b>Hotel Name:</b> {{ $booking->hotel_name }}</div>

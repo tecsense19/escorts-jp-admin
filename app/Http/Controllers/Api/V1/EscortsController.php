@@ -23,6 +23,9 @@ use Validator;
 
 class EscortsController extends BaseController
 {
+    private $globalIdsArray = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24'];
+    private $globalTimesArray = ['01:00','02:00','03:00','04:00','05:00','06:00','07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00','24:00'];
+
     public function register(Request $request)
     {
         try {
@@ -227,6 +230,20 @@ class EscortsController extends BaseController
             return $this->sendError($e->getMessage());
         }
     }
+
+    function getDatesBetween($startDate, $endDate) {
+        $dates = array();
+    
+        $currentDate = strtotime($startDate);
+        $endDate = strtotime($endDate);
+    
+        while ($currentDate <= $endDate) {
+            $dates[] = date('Y-m-d', $currentDate);
+            $currentDate = strtotime('+1 day', $currentDate);
+        }
+    
+        return $dates;
+    }
     
     public function escortAvailabilityAdd(Request $request)
     {
@@ -235,63 +252,108 @@ class EscortsController extends BaseController
 
             $validator = Validator::make($input, [
                 'user_id' => 'required',
-                'available_date' => 'required',
-                'available_slot' => 'required',
+                'from_date' => 'required',
+                'to_date' => 'required',
             ]);
         
             if ($validator->fails()) {
                 return $this->sendError($validator->errors()->first());
             }
 
-            $availableDate = date('Y-m-d', strtotime($input['available_date']));
-            $availableSlot = $input['available_slot'];
-            $userId = $input['user_id'];
+            $input = $request->all();
 
-            $explodeSlot = [];
-            if($availableSlot)
-            {
-                $explodeSlot = explode(',', $availableSlot);
-            }
+            $availableDate = date('Y-m-d', strtotime($input['from_date']));
+            $fromDate = date('Y-m-d', strtotime($input['from_date']));
+            $toDate = date('Y-m-d', strtotime($input['to_date']));
+            // $availableSlot = $input['available_slot'];
+            $userId = $input['user_id'];
+            $timeIds = $input['time_ids'] ? explode(',', $input['time_ids']) : [];
 
             $timeArr = [];
-            for ($i=0; $i < count($explodeSlot); $i++) 
-            {
-                $timeArr[] = date('H:i:s', strtotime($explodeSlot[$i]));
+
+            foreach ($timeIds as $key => $id) {
+                $timeArr[] = $this->globalTimesArray[$key];
             }
 
+            $allDates = $this->getDatesBetween($fromDate, $toDate);
+
+            // $explodeSlot = [];
+            // if($availableSlot)
+            // {
+            //     $explodeSlot = explode(',', $availableSlot);
+            // }
+
+            // $timeArr = [];
+            // for ($i=0; $i < count($explodeSlot); $i++) 
+            // {
+            //     $timeArr[] = date('H:i:s', strtotime($explodeSlot[$i]));
+            // }
+
             EscortsAvailability::where('user_id', $userId)
-                                ->where('available_date', $availableDate)
+                                ->whereIn('available_date', $allDates)
                                 ->whereNotIn('available_time', $timeArr)
                                 ->delete();
 
-            for ($i=0; $i < count($explodeSlot); $i++) 
+            for ($i=0; $i < count($timeArr); $i++) 
             {
-                $availableArr = [];
-                $availableArr['user_id'] = $userId;
-                $availableArr['available_date'] = $availableDate;
-                $availableArr['available_time'] = date('H:i', strtotime($explodeSlot[$i]));
-
-                $checkAvailable = EscortsAvailability::where('user_id', $userId)
-                                                    ->where('available_date', $availableDate)
-                                                    ->where('available_time', date('H:i:s', strtotime($explodeSlot[$i])))
-                                                    ->first();
-                
-                if($checkAvailable)
+                foreach ($allDates as $key => $dates) 
                 {
-                    EscortsAvailability::where('user_id', $userId)
-                                        ->where('available_date', $availableDate)
-                                        ->where('available_time', date('H:i:s', strtotime($explodeSlot[$i])))
-                                        ->update($availableArr);
-                }
-                else
-                {
-                    EscortsAvailability::create($availableArr);
+                    $availableArr = [];
+                    $availableArr['user_id'] = $userId;
+                    $availableArr['available_date'] = $dates;
+                    $availableArr['available_time'] = date('H:i:s', strtotime($timeArr[$i]));
+                    $availableArr['start_time'] = date('H:i:s', strtotime($timeArr[$i]));
+                    $availableArr['end_time'] = date('H:i:s', strtotime($timeArr[$i]) + 3600);
+        
+                    $checkAvailable = EscortsAvailability::where('user_id', $userId)
+                                                        ->where('available_date', $dates)
+                                                        ->where('available_time', date('H:i:s', strtotime($timeArr[$i])))
+                                                        ->first();
+                    
+                    if($checkAvailable)
+                    {
+                        EscortsAvailability::where('user_id', $userId)
+                                            ->where('available_date', $dates)
+                                            ->where('available_time', date('H:i:s', strtotime($timeArr[$i])))
+                                            ->update($availableArr);
+                    }
+                    else
+                    {
+                        EscortsAvailability::create($availableArr);
+                    }                
                 }
             }
 
             $getAvailability = EscortsAvailability::where('user_id', $userId)->where('available_date', $availableDate)->get();
 
             return $this->sendResponse($getAvailability, 'Availability added successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    public function escortAvailabilityList(Request $request)
+    {
+        try {
+            $input = $request->all();
+
+            $validator = Validator::make($input, [
+                'user_id' => 'required'
+            ]);
+        
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->first());
+            }
+
+            $userId = $input['user_id'];
+
+            $availableList = EscortsAvailability::where('user_id', $userId)
+                                                ->where('available_date', '>=', date('Y-m-d'))
+                                                ->orderBy('available_date', 'asc')
+                                                ->orderBy('available_time', 'asc')
+                                                ->get();
+
+            return $this->sendResponse($availableList, 'Availability list get successfully.');
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
         }
@@ -429,6 +491,30 @@ class EscortsController extends BaseController
             }
 
             return $this->sendResponse($input['is_favourite'], $message);
+
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    public function getTiming(Request $request)
+    {
+        try {
+
+            $input = $request->all();
+
+            $combinedArray = [];
+
+            foreach ($this->globalIdsArray as $key => $id) {
+                $combinedArray[] = [
+                    'id' => $id,
+                    'time' => $this->globalTimesArray[$key],
+                    'from_time' => $this->globalTimesArray[$key],
+                    'to_time' => date('H:i', strtotime($this->globalTimesArray[$key]) + 3600),
+                ];
+            }
+
+            return $this->sendResponse($combinedArray, 'Get timing successfully.');
 
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
