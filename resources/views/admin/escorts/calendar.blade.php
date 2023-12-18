@@ -659,10 +659,12 @@ $(document).ready(function() {
     let event_data = {"events":[]};
 
     $('#from_date').datepicker({
-        dateFormat: 'dd-mm-yy'
+        dateFormat: 'dd-mm-yy',
+        minDate: 0
     });
     $('#to_date').datepicker({
-        dateFormat: 'dd-mm-yy'
+        dateFormat: 'dd-mm-yy',
+        minDate: 0
     });
 
     $('.available_slot').change(function () {
@@ -677,7 +679,18 @@ $(document).ready(function() {
 
     getAvailabilityData();
 
+    var today = moment().format('YYYY-MM-DD');
+
     var calendar = $('#calendar').fullCalendar({
+        validRange: {
+            start: today // Disable previous dates
+        },
+        // dayRender: function (date, cell) {
+        //     if (date.isBefore(today, 'day')) {
+        //         // Disable the date by adding a custom class
+        //         cell.addClass('fc-past');
+        //     }
+        // },
         editable: true,
         events: "fetch-event.php",
         displayEventTime: false,

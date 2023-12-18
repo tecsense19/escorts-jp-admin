@@ -36,9 +36,6 @@ class EscortsController extends BaseController
                 'full_name' => 'required',
                 'about' => 'required',
                 'age' => 'required',
-                'country' => 'required',
-                'state' => 'required',
-                'city' => 'required',
                 'hourly_price' => 'required',
                 'line_number' => 'required',
                 'mobile_no' => isset($input['user_id']) && $input['user_id'] != ''
@@ -63,10 +60,12 @@ class EscortsController extends BaseController
             $userData['country'] = isset($input['country']) ? $input['country'] : '';
             $userData['state'] = isset($input['state']) ? $input['state'] : '';
             $userData['city'] = isset($input['city']) ? $input['city'] : '';
+            $userData['phone_code'] = isset($input['phone_code']) ? $input['phone_code'] : '';
             $userData['mobile_no'] = isset($input['mobile_no']) ? $input['mobile_no'] : '';
             $userData['line_number'] = isset($input['line_number']) ? $input['line_number'] : '';
             $userData['email'] = isset($input['email']) ? $input['email'] : '';
             $userData['hourly_price'] = isset($input['hourly_price']) ? $input['hourly_price'] : '';
+            $userData['ward'] = isset($input['ward']) ? $input['ward'] : '';
 
             $userId = '';
             $message = '';

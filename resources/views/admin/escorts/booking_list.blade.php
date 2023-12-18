@@ -19,7 +19,7 @@
                 @endphp
                 <tr>
                     <th scope="row">{{ ($key + 1)  }}</th>
-                    <td>{{ $booking->getusers->mobile_no }}</td>
+                    <td>{{ isset($booking->getusers) ? $booking->getusers->mobile_no : '-' }}</td>
                     <td>
                         <div class="">
                             <div><b>Hotel Name:</b><br> {{ $booking->hotel_name }}</div>

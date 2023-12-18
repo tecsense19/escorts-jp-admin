@@ -118,7 +118,7 @@
                                 </ul>
                             </div> -->
                             <div class="card-body">
-                                <h5 class="card-title">UpComing Booking</h5>
+                                <h5 class="card-title">Upcoming Booking</h5>
                                 <div class="d-flex align-items-center">
                                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                         <i class="bi bi-bag"></i>

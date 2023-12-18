@@ -185,6 +185,38 @@
                                     </div>
                                 </div>
                                 <div class="row mb-3">
+                                    <label for="ward" class="col-md-4 col-lg-3 col-form-label">Ward</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <select name="ward" id="ward" class="form-control">
+                                            <option value="">Select ward</option>
+                                            <option value="Minato">Minato</option>
+                                            <option value="Chiyoda">Chiyoda</option>
+                                            <option value="Chūō">Chūō</option>
+                                            <option value="Shinjuku">Shinjuku</option>
+                                            <option value="Bunkyō">Bunkyō</option>
+                                            <option value="Taitō">Taitō</option>
+                                            <option value="Sumida">Sumida</option>
+                                            <option value="Kōtō">Kōtō</option>
+                                            <option value="Shinagawa">Shinagawa</option>
+                                            <option value="Meguro">Meguro</option>
+                                            <option value="Ōta">Ōta</option>
+                                            <option value="Setagaya">Setagaya</option>
+                                            <option value="Shibuya">Shibuya</option>
+                                            <option value="Nakano">Nakano</option>
+                                            <option value="Suginami">Suginami</option>
+                                            <option value="Toshima">Toshima</option>
+                                            <option value="Kita">Kita</option>
+                                            <option value="Arakawa">Arakawa</option>
+                                            <option value="Itabashi">Itabashi</option>
+                                            <option value="Nerima">Nerima</option>
+                                            <option value="Adachi">Adachi</option>
+                                            <option value="Katsushika">Katsushika</option>
+                                            <option value="Edogawa">Edogawa</option>
+                                        </select>
+                                        <label id="ward-error" class="error" for="ward"></label>
+                                    </div>
+                                </div>
+                                <!-- <div class="row mb-3">
                                     <label for="country" class="col-md-4 col-lg-3 col-form-label">Country</label>
                                     <div class="col-md-8 col-lg-9">
                                         <select name="country" id="country" class="form-control">
@@ -213,7 +245,7 @@
                                         </select>
                                         <label id="city-error" class="error" for="city"></label>
                                     </div>
-                                </div>
+                                </div> -->
                                 <!-- <div class="row mb-3">
                                     <label for="address" class="col-md-4 col-lg-3 col-form-label">Address</label>
                                     <div class="col-md-8 col-lg-9">
@@ -281,15 +313,18 @@
                 age: {
                     required: true,
                 },
-                country : {
+                ward: {
                     required: true,
                 },
-                state : {
-                    required: true,
-                },
-                city : {
-                    required: true,
-                },
+                // country : {
+                //     required: true,
+                // },
+                // state : {
+                //     required: true,
+                // },
+                // city : {
+                //     required: true,
+                // },
                 mobile_no : {
                     required: true,
                 },
@@ -313,15 +348,18 @@
                 age: {
                     required: "Age is required!",
                 },
-                country : {
-                    required: 'Country is required!',
+                ward: {
+                    required: "Ward is required!",
                 },
-                state : {
-                    required: 'State is required!',
-                },
-                city : {
-                    required: 'City is required!',
-                },
+                // country : {
+                //     required: 'Country is required!',
+                // },
+                // state : {
+                //     required: 'State is required!',
+                // },
+                // city : {
+                //     required: 'City is required!',
+                // },
                 mobile_no : {
                     required: 'Mobile no is required!',
                 },
@@ -362,7 +400,12 @@
             changeState(selectedState, '')
         });
 
-        $('#country, #state, #city').select2();
+        // $('#country, #state, #city').select2();
+        $('#ward').select2();
+
+        $('#ward').on('change', function(e) {
+            $('#ward-error').text('')
+        })
 
         $('#image-upload').on('change', function (e) {
             var files = e.target.files;

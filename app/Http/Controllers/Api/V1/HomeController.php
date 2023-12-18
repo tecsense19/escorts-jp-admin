@@ -31,6 +31,7 @@ class HomeController extends BaseController
             $input = $request->all();
 
             $validator = Validator::make($input, [
+                'phone_code' => 'required|numeric',
                 'mobile_no' => 'required|numeric'
             ]);
         
@@ -43,9 +44,13 @@ class HomeController extends BaseController
             // $twilio_sid = getenv("TWILIO_SID");
             // $twilio_verify_sid = getenv("TWILIO_VERIFY_SID");
             // $twilio = new Client($twilio_sid, $token);
-            // $twilio->verify->v2->services($twilio_verify_sid)->verifications->create($input['mobile_no'], "sms");
+            // $verification = $twilio->verify->v2->services($twilio_verify_sid)->verifications->create("+15017122661", "sms");
+            // echo "<pre>";
+            // print_r($verification);
+            // die;
 
             $userArr = [];
+            $userArr['phone_code'] = $input['phone_code'];
             $userArr['mobile_no'] = $input['mobile_no'];
             $userArr['user_role'] = 'client';
             $userArr['mobile_otp'] = 123456;
@@ -76,8 +81,9 @@ class HomeController extends BaseController
             $input = $request->all();
 
             $validator = Validator::make($input, [
-                'mobile_no' => 'required|string',
-                'mobile_otp' => 'required|string'
+                'phone_code' => 'required|number',
+                'mobile_no' => 'required|number',
+                'mobile_otp' => 'required|number'
             ]);
         
             if ($validator->fails()) {
@@ -393,6 +399,11 @@ class HomeController extends BaseController
         try {
 
             $getCountryList = Countries::get();
+
+            foreach ($getCountryList as $key => $value) 
+            {
+                $value->flage = url('/').'/public/flags/'.strtolower($value->code).'.png';
+            }
 
             return $this->sendResponse($getCountryList, 'Country list get successfully.');
 

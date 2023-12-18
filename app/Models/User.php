@@ -32,7 +32,9 @@ class User extends Authenticatable
         'user_role',
         'age',
         'hourly_price',
-        'mobile_otp'
+        'mobile_otp',
+        'phone_code',
+        'ward'
     ];
 
     /**

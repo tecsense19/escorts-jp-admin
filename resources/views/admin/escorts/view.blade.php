@@ -107,7 +107,7 @@
                                 <div class="d-flex justify-content-end align-items-center">
                                     <div class="d-flex">
                                         <select class="form-control me-2" name="booking_type" id="booking_type">
-                                            <option value="all">All</option>
+                                            <option value="">All</option>
                                             <option value="upcoming">Upcoming</option>
                                             <option value="past">Past</option>
                                         </select>
