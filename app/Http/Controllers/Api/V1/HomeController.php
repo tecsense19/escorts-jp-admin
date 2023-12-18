@@ -31,7 +31,7 @@ class HomeController extends BaseController
             $input = $request->all();
 
             $validator = Validator::make($input, [
-                'phone_code' => 'required|numeric',
+                'phone_code' => 'required|string',
                 'mobile_no' => 'required|numeric'
             ]);
         
@@ -81,9 +81,9 @@ class HomeController extends BaseController
             $input = $request->all();
 
             $validator = Validator::make($input, [
-                'phone_code' => 'required|number',
-                'mobile_no' => 'required|number',
-                'mobile_otp' => 'required|number'
+                'phone_code' => 'required|string',
+                'mobile_no' => 'required|string',
+                'mobile_otp' => 'required|string'
             ]);
         
             if ($validator->fails()) {
@@ -535,6 +535,7 @@ class HomeController extends BaseController
 
             $validator = Validator::make($input, [
                 'user_id' => 'required',
+                'phone_code' => 'required',
                 'old_mobile_no' => 'required',
                 'mobile_no' => 'required',
             ]);
@@ -551,6 +552,7 @@ class HomeController extends BaseController
                 if(!$checkNewNumber)
                 {
                     $updateArr = [];
+                    $updateArr['phone_code'] = $input['phone_code'];
                     $updateArr['mobile_no'] = $input['mobile_no'];
 
                     User::where('id', $input['user_id'])->update($updateArr);
