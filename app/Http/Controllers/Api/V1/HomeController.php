@@ -59,6 +59,7 @@ class HomeController extends BaseController
             $lastId = $input['mobile_no'];
             if($checkUser)
             {
+                $userArr['user_role'] = $checkUser ? $checkUser->user_role : 'client' ;
                 User::where('mobile_no', $input['mobile_no'])->update($userArr);
             }
             else

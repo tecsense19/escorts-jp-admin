@@ -11,6 +11,7 @@
     $line_number = isset($getUserDetails) ? $getUserDetails->line_number : old('line_number');
     $email = isset($getUserDetails) ? $getUserDetails->email : old('email');
     $hourly_price = isset($getUserDetails) ? $getUserDetails->hourly_price : old('hourly_price');
+    $ward = isset($getUserDetails) ? $getUserDetails->ward : old('ward');
 @endphp
 @include('admin.layout.front')
 @include('admin.layout.header')
@@ -381,6 +382,7 @@
         var countryId = '{{ $country }}';
         var stateId = '{{ $state }}';
         var cityId = '{{ $city }}';
+        var ward = '{{ $ward }}';
         if(countryId)
         {
             changeCountry(countryId, stateId)
@@ -388,6 +390,11 @@
         if(stateId)
         {
             changeState(stateId, cityId)
+        }
+
+        if(ward)
+        {
+            $('#ward option[value="'+ward+'"]').attr('selected', 'selected');
         }
 
         $('body').on('change', '#country', function(e) {            

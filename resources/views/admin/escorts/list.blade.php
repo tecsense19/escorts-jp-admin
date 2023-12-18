@@ -2,6 +2,7 @@
     <thead>
         <tr>
             <th scope="col">#</th>
+            <th scope="col">Profile Pic</th>
             <th scope="col">Name</th>
             <th scope="col">Email</th>
             <th scope="col">Mobile No.</th>
@@ -16,9 +17,22 @@
             @foreach($escortsList as $key => $user)
                 @php
                     $userId = Crypt::encryptString($user->id);
+                    $getProfile = \App\Models\ProfileImages::where('user_id', $user->id)->first();
+                    $profilePic = '';
+                    if($getProfile)
+                    {
+                        $profilePic = $getProfile->file_path ? $getProfile->file_path : '';
+                    }
                 @endphp
                 <tr>
                     <th scope="row">{{ ($key + 1)  }}</th>
+                    <td class="text-center">
+                        <div class="col-sm-3 image-preview">
+                            @if($profilePic)
+                                <img src="{{ $profilePic }}" alt="Profile" class="rounded-circle" style="width: 75px; height: 75px;">
+                            @endif
+                        </div>
+                    </td>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
                     <td>{{ $user->mobile_no }}</td>
