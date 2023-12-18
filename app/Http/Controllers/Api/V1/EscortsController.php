@@ -579,9 +579,9 @@ class EscortsController extends BaseController
             foreach ($this->globalIdsArray as $key => $id) {
                 $combinedArray[] = [
                     'id' => $id,
-                    'time' => $this->globalTimesArray[$id],
-                    'from_time' => $this->globalTimesArray[$id],
-                    'to_time' => date('H:i', strtotime($this->globalTimesArray[$id]) + 3600),
+                    'time' => $this->globalTimesArray[$key],
+                    'from_time' => $this->globalTimesArray[$key],
+                    'to_time' => date('H:i', strtotime($this->globalTimesArray[$key]) + 3600),
                 ];
             }
 

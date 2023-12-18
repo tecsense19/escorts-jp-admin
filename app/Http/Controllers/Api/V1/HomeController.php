@@ -21,6 +21,8 @@ use App\Http\Controllers\Api\BaseController as BaseController;
 use DB;
 use Validator;
 
+use Twilio\Rest\Client;
+
 class HomeController extends BaseController
 {
     public function sentOtp(Request $request)
@@ -35,6 +37,13 @@ class HomeController extends BaseController
             if ($validator->fails()) {
                 return $this->sendError($validator->errors()->first());
             }
+
+            /* Get credentials from .env */
+            // $token = getenv("TWILIO_AUTH_TOKEN");
+            // $twilio_sid = getenv("TWILIO_SID");
+            // $twilio_verify_sid = getenv("TWILIO_VERIFY_SID");
+            // $twilio = new Client($twilio_sid, $token);
+            // $twilio->verify->v2->services($twilio_verify_sid)->verifications->create($input['mobile_no'], "sms");
 
             $userArr = [];
             $userArr['mobile_no'] = $input['mobile_no'];
