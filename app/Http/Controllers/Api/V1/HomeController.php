@@ -69,7 +69,7 @@ class HomeController extends BaseController
 
             $userDetails = User::where('mobile_no', $input['mobile_no'])->first();
 
-            return $this->sendResponse($userDetails, 'Escorts list get successfully.');
+            return $this->sendResponse($userDetails, 'OTP sent successfully.');
 
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
@@ -129,6 +129,7 @@ class HomeController extends BaseController
                         $query->where('favourite_escorts.user_id', $userId);
                     })
                     ->where('users.user_role', 'escorts')
+                    ->where('users.status', 1)
                     ->get();
 
             $responseArr = [];
@@ -314,7 +315,7 @@ class HomeController extends BaseController
             $checkEscorts = User::where('id', $input['escort_id'])->where('user_role', 'escorts')->first();
             if($checkEscorts)
             {
-                $checkUser = User::where('id', $input['escort_id'])->where('user_role', 'escorts')->first();
+                $checkUser = User::where('id', $input['user_id'])->where('user_role', 'client')->first();
                 if($checkUser)
                 {
                     $bookingArr = [];
@@ -460,8 +461,7 @@ class HomeController extends BaseController
         try {
             $input = $request->all();
 
-            $getBookingList = EscortsBookings::join('users', 'escorts_bookings.user_id', '=', 'users.id')
-                                            ->with(['bookingSlots', 'getusers', 'getescorts'])
+            $getBookingList = EscortsBookings::with(['bookingSlots', 'getusers', 'getescorts'])
                                             ->where(function ($query) use ($input) {
                                                 if (isset($input['escort_id']) && $input['escort_id'] != '') {
                                                     $query->where('escort_id', $input['escort_id']);
@@ -484,7 +484,7 @@ class HomeController extends BaseController
                                                     });
                                                 }
                                             })
-                                            ->orderBy('escorts_bookings.id', 'desc')
+                                            ->orderBy('id', 'desc')
                                             ->get();
             foreach ($getBookingList as $key => $value) 
             {

@@ -170,20 +170,20 @@
                                 <div class="row mb-3">
                                     <label for="full_name" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
                                     <div class="col-md-8 col-lg-9">
-                                        <input name="full_name" type="text" class="form-control" id="full_name" value="{{ $full_name }}" required>
+                                        <input name="full_name" type="text" class="form-control" id="full_name" value="{{ $full_name }}" placeholder="Enter Full Name">
                                         <input type="hidden" name="user_id" id="user_id" value="{{ $user_id }}"/>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="about" class="col-md-4 col-lg-3 col-form-label">About</label>
                                     <div class="col-md-8 col-lg-9">
-                                        <textarea name="about" class="form-control" id="about" style="height: 100px">{{ $about }}</textarea>
+                                        <textarea name="about" class="form-control" id="about" style="height: 100px" placeholder="Enter Description">{{ $about }}</textarea>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="age" class="col-md-4 col-lg-3 col-form-label">Age</label>
                                     <div class="col-md-8 col-lg-9">
-                                        <input name="age" type="number" class="form-control" id="age" value="{{ $age }}">
+                                        <input name="age" type="number" class="form-control" id="age" value="{{ $age }}" placeholder="Enter Age">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -482,19 +482,19 @@
                                 <div class="row mb-3">
                                     <label for="mobile_no" class="col-md-4 col-lg-3 col-form-label">Whatsapp Number</label>
                                     <div class="col-md-8 col-lg-9">
-                                        <input name="mobile_no" type="number" class="form-control" id="mobile_no" value="{{ $mobile_no }}">
+                                        <input name="mobile_no" type="number" class="form-control" id="mobile_no" value="{{ $mobile_no }}" placeholder="Enter Whatsapp Number">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="line_number" class="col-md-4 col-lg-3 col-form-label">Line Number</label>
                                     <div class="col-md-8 col-lg-9">
-                                        <input name="line_number" type="number" class="form-control" id="line_number" value="{{ $line_number }}">
+                                        <input name="line_number" type="number" class="form-control" id="line_number" value="{{ $line_number }}" placeholder="Enter Line Number">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="email" class="col-md-4 col-lg-3 col-form-label">Email</label>
                                     <div class="col-md-8 col-lg-9">
-                                        <input name="email" type="email" class="form-control" id="email" value="{{ $email }}">
+                                        <input name="email" type="email" class="form-control" id="email" value="{{ $email }}" placeholder="Enter Email">
                                     </div>
                                 </div>
                                 @if($user_id == '')
@@ -508,7 +508,7 @@
                                 <div class="row mb-3">
                                     <label for="hourly_price" class="col-md-4 col-lg-3 col-form-label">Hourly Price</label>
                                     <div class="col-md-8 col-lg-9">
-                                        <input name="hourly_price" type="text" class="form-control" id="hourly_price" value="{{ $hourly_price }}">
+                                        <input name="hourly_price" type="text" class="form-control" id="hourly_price" value="{{ $hourly_price }}" placeholder="Enter Hourly Price">
                                     </div>
                                 </div>
                                 <div class="text-center">
@@ -531,7 +531,7 @@
 
         $("#profileForm").validate({
             rules: {
-                fullName: {
+                full_name: {
                     required: true,
                 },
                 about: {
@@ -557,19 +557,23 @@
                 },
                 mobile_no : {
                     required: true,
+                    digits: true,
+                    minlength: 10,
+                    maxlength: 10
                 },
                 line_number : {
                     required: true,
                 },
                 email: {
                     required: true,
+                    email: true,
                 },
                 hourly_price: {
                     required: true,
                 }
             },
             messages: {
-                fullName: {
+                full_name: {
                     required: "Full name is required!",
                 },
                 about: {
@@ -595,12 +599,16 @@
                 },
                 mobile_no : {
                     required: 'Mobile no is required!',
+                    digits: "Mobile no must contain only digits",
+                    minlength: "Mobile no must be exactly 10 digits",
+                    maxlength: "Mobile no must be exactly 10 digits"
                 },
                 line_number : {
                     required: 'Line no is required!',
                 },
                 email : {
                     required: 'Email is required!',
+                    email: 'Please enter valid email address.'
                 },
                 hourly_price: {
                     required: 'Hourly price is required!',
@@ -647,7 +655,13 @@
         });
 
         // $('#country, #state, #city').select2();
-        $('#ward, #phone_code').select2();
+        $('#ward').select2({
+            placeholder: "Select ward"
+        });
+
+        $('#phone_code').select2({
+            placeholder: "Select Phone Code"
+        });
 
         $('#ward').on('change', function(e) {
             $('#ward-error').text('')

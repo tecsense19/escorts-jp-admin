@@ -8,6 +8,7 @@ use App\Models\States;
 use App\Models\Cities;
 use App\Models\ProfileImages;
 use App\Models\EscortsBookings;
+use App\Models\BookingSlot;
 use App\Models\EscortsAvailability;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
@@ -226,6 +227,11 @@ class EscortsController extends Controller
         ProfileImages::where('user_id', $userId)->where('type', 'video')->delete();
 
         User::where('id', $userId)->delete();
+
+        $getBooking = EscortsBookings::where('escort_id', $userId)->pluck('id')->toArray();
+
+        EscortsBookings::where('escort_id', $userId)->delete();
+        BookingSlot::whereIn('booking_id', $getBooking)->delete();
 
         return response()->json(['success' => true, 'message' => 'Escorts profile deleted successfully.']);
     }

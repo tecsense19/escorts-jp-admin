@@ -69,6 +69,7 @@ class BookingController extends Controller
 
         $bookingId = Crypt::decryptString($input['booking_id']);
         EscortsBookings::where('id', $bookingId)->delete();
+        BookingSlot::where('booking_id', $bookingId)->delete();
 
         return response()->json(['success' => true, 'message' => 'Booking deleted successfully.']);
     }

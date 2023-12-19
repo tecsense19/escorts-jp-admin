@@ -536,81 +536,193 @@ input[type=checkbox]:before {
                                     <div class="row">
                                         <div class="col-sm-3 p-2">
                                             <div class="app-check">
-                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_1" value="10:00 AM" />
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_1" value="01:00 AM" />
                                                 <div class="app-border">
-                                                    <label for="slot_1" class="app-label">10:00 AM</label>
+                                                    <label for="slot_1" class="app-label">01:00 AM</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-sm-3 p-2">
                                             <div class="app-check">
-                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_2" value="11:00 AM" />
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_2" value="02:00 AM" />
                                                 <div class="app-border">
-                                                    <label for="slot_2" class="app-label">11:00 AM</label>
+                                                    <label for="slot_2" class="app-label">02:00 AM</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-sm-3 p-2">
                                             <div class="app-check">
-                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_3" value="12:00 PM" />
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_3" value="03:00 AM" />
                                                 <div class="app-border">
-                                                    <label for="slot_3" class="app-label">12:00 PM</label>
+                                                    <label for="slot_3" class="app-label">03:00 AM</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-sm-3 p-2">
                                             <div class="app-check">
-                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_4" value="01:00 PM" />
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_4" value="04:00 AM" />
                                                 <div class="app-border">
-                                                    <label for="slot_4" class="app-label">1:00 PM</label>
+                                                    <label for="slot_4" class="app-label">04:00 AM</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-sm-3 p-2">
                                             <div class="app-check">
-                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_5" value="02:00 PM" />
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_5" value="05:00 AM" />
                                                 <div class="app-border">
-                                                    <label for="slot_5" class="app-label">2:00 PM</label>
+                                                    <label for="slot_5" class="app-label">05:00 AM</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-sm-3 p-2">
                                             <div class="app-check">
-                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_6" value="03:00 PM" />
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_6" value="06:00 AM" />
                                                 <div class="app-border">
-                                                    <label for="slot_6" class="app-label">3:00 PM</label>
+                                                    <label for="slot_6" class="app-label">06:00 AM</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-sm-3 p-2">
                                             <div class="app-check">
-                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_7" value="04:00 PM" />
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_7" value="07:00 AM" />
                                                 <div class="app-border">
-                                                    <label for="slot_7" class="app-label">4:00 PM</label>
+                                                    <label for="slot_7" class="app-label">07:00 AM</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-sm-3 p-2">
                                             <div class="app-check">
-                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_8" value="05:00 PM" />
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_8" value="08:00 AM" />
                                                 <div class="app-border">
-                                                    <label for="slot_8" class="app-label">5:00 PM</label>
+                                                    <label for="slot_8" class="app-label">08:00 AM</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-sm-3 p-2">
                                             <div class="app-check">
-                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_9" value="06:00 PM" />
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_9" value="09:00 AM" />
                                                 <div class="app-border">
-                                                    <label for="slot_9" class="app-label">6:00 PM</label>
+                                                    <label for="slot_9" class="app-label">09:00 AM</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-sm-3 p-2">
                                             <div class="app-check">
-                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_10" value="07:00 PM" />
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_10" value="10:00 AM" />
                                                 <div class="app-border">
-                                                    <label for="slot_10" class="app-label">7:00 PM</label>
+                                                    <label for="slot_10" class="app-label">10:00 AM</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-2">
+                                            <div class="app-check">
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_11" value="11:00 AM" />
+                                                <div class="app-border">
+                                                    <label for="slot_11" class="app-label">11:00 AM</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-2">
+                                            <div class="app-check">
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_12" value="12:00 PM" />
+                                                <div class="app-border">
+                                                    <label for="slot_12" class="app-label">12:00 PM</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-2">
+                                            <div class="app-check">
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_13" value="01:00 PM" />
+                                                <div class="app-border">
+                                                    <label for="slot_13" class="app-label">01:00 PM</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-2">
+                                            <div class="app-check">
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_14" value="02:00 PM" />
+                                                <div class="app-border">
+                                                    <label for="slot_14" class="app-label">02:00 PM</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-2">
+                                            <div class="app-check">
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_15" value="03:00 PM" />
+                                                <div class="app-border">
+                                                    <label for="slot_15" class="app-label">03:00 PM</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-2">
+                                            <div class="app-check">
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_16" value="04:00 PM" />
+                                                <div class="app-border">
+                                                    <label for="slot_16" class="app-label">04:00 PM</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-2">
+                                            <div class="app-check">
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_17" value="05:00 PM" />
+                                                <div class="app-border">
+                                                    <label for="slot_17" class="app-label">05:00 PM</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-2">
+                                            <div class="app-check">
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_18" value="06:00 PM" />
+                                                <div class="app-border">
+                                                    <label for="slot_18" class="app-label">06:00 PM</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-2">
+                                            <div class="app-check">
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_19" value="07:00 PM" />
+                                                <div class="app-border">
+                                                    <label for="slot_19" class="app-label">07:00 PM</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-2">
+                                            <div class="app-check">
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_20" value="08:00 PM" />
+                                                <div class="app-border">
+                                                    <label for="slot_20" class="app-label">08:00 PM</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-2">
+                                            <div class="app-check">
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_21" value="09:00 PM" />
+                                                <div class="app-border">
+                                                    <label for="slot_21" class="app-label">09:00 PM</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-2">
+                                            <div class="app-check">
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_22" value="10:00 PM" />
+                                                <div class="app-border">
+                                                    <label for="slot_22" class="app-label">10:00 PM</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-2">
+                                            <div class="app-check">
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_23" value="11:00 PM" />
+                                                <div class="app-border">
+                                                    <label for="slot_23" class="app-label">11:00 PM</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-2">
+                                            <div class="app-check">
+                                                <input type="checkbox" class="option-input radio available_slot" name="available_slot" id="slot_24" value="12:00 AM" />
+                                                <div class="app-border">
+                                                    <label for="slot_24" class="app-label">12:00 AM</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -806,8 +918,8 @@ $(document).ready(function() {
             availableSlot = checkedValues.join(",");
         }
 
-        if(availableSlot)
-        {
+        // if(availableSlot)
+        // {
             var userId = $('#user_id').val();
 
             var fromDate = $('#from_date').val();
@@ -842,7 +954,7 @@ $(document).ready(function() {
                     getAvailabilityData()
                 }
             });
-        }
+        // }
     });
     
     function getAvailabilityData()

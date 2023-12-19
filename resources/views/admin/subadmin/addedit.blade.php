@@ -2,7 +2,7 @@
     $user_id = isset($getUserDetails) ? $getUserDetails->id : '';
     $full_name = isset($getUserDetails) ? $getUserDetails->name : old('full_name');
     $email = isset($getUserDetails) ? $getUserDetails->email : old('email');
-    $user_permissions = isset($getUserDetails) ? explode(",", $getUserDetails->user_permissions) : '';
+    $user_permissions = isset($getUserDetails) ? explode(",", $getUserDetails->user_permissions) : [];
 @endphp
 @include('admin.layout.front')
 @include('admin.layout.header')
@@ -115,21 +115,27 @@
                                 <div class="row mb-3">
                                     <label for="full_name" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
                                     <div class="col-md-8 col-lg-9">
-                                        <input name="full_name" type="text" class="form-control" id="full_name" value="{{ $full_name }}" required>
+                                        <input name="full_name" type="text" class="form-control" id="full_name" value="{{ $full_name }}" placeholder="Enter Full Name">
                                         <input type="hidden" name="user_id" id="user_id" value="{{ $user_id }}"/>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="email" class="col-md-4 col-lg-3 col-form-label">Email</label>
                                     <div class="col-md-8 col-lg-9">
-                                        <input name="email" type="email" class="form-control" id="email" value="{{ $email }}">
+                                        <input name="email" type="email" class="form-control" id="email" value="{{ $email }}" placeholder="Enter Email">
                                     </div>
                                 </div>
                                 @if($user_id == '')
                                     <div class="row mb-3">
                                         <label for="password" class="col-md-4 col-lg-3 col-form-label">Password</label>
                                         <div class="col-md-8 col-lg-9">
-                                            <input name="password" type="password" class="form-control" id="password" value="{{ old('password') }}">
+                                            <input name="password" type="password" class="form-control" id="password" value="{{ old('password') }}" placeholder="Enter Password">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label for="confirm_password" class="col-md-4 col-lg-3 col-form-label">Confirm Password</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="confirm_password" type="password" class="form-control" id="confirm_password" value="{{ old('confirm_password') }}" placeholder="Enter Confirm Password">
                                         </div>
                                     </div>
                                 @endif
@@ -145,7 +151,7 @@
                                             <option value="setting" @if(in_array('setting', $user_permissions)) {{ 'selected' }} @endif>Settings</option>
                                             <option value="subadmin" @if(in_array('subadmin', $user_permissions)) {{ 'selected' }} @endif>Subadmin</option>
                                         </select>
-                                        <label id="ward-error" class="error" for="ward"></label>
+                                        <label id="user_permissions-error" class="error" for="user_permissions"></label>
                                     </div>
                                 </div>
                                 <div class="text-center">
@@ -168,73 +174,41 @@
 
         $("#profileForm").validate({
             rules: {
-                fullName: {
-                    required: true,
-                },
-                about: {
-                    required: true,
-                },
-                age: {
-                    required: true,
-                },
-                ward: {
-                    required: true,
-                },
-                // country : {
-                //     required: true,
-                // },
-                // state : {
-                //     required: true,
-                // },
-                // city : {
-                //     required: true,
-                // },
-                mobile_no : {
-                    required: true,
-                },
-                line_number : {
+                full_name: {
                     required: true,
                 },
                 email: {
                     required: true,
+                    email: true
                 },
-                hourly_price: {
+                password: {
+                    required: true,
+                },
+                confirm_password: {
+                    required: true,
+                    equalTo: "#password" // Reference to the password field
+                },
+                'user_permissions[]': {
                     required: true,
                 }
             },
             messages: {
-                fullName: {
+                full_name: {
                     required: "Full name is required!",
-                },
-                about: {
-                    required: "About is required!",
-                },
-                age: {
-                    required: "Age is required!",
-                },
-                ward: {
-                    required: "Ward is required!",
-                },
-                // country : {
-                //     required: 'Country is required!',
-                // },
-                // state : {
-                //     required: 'State is required!',
-                // },
-                // city : {
-                //     required: 'City is required!',
-                // },
-                mobile_no : {
-                    required: 'Mobile no is required!',
-                },
-                line_number : {
-                    required: 'Line no is required!',
                 },
                 email : {
                     required: 'Email is required!',
+                    email: "Please enter valid email address."
                 },
-                hourly_price: {
-                    required: 'Hourly price is required!',
+                password: {
+                    required: 'Password is required!',
+                },
+                confirm_password: {
+                    required: 'Confirm password is required!',
+                    equalTo: 'Passwords do not match!'
+                },
+                'user_permissions[]': {
+                    required: 'Permission is required!',
                 }
             },
             submitHandler: function(form) {
@@ -242,7 +216,13 @@
             }
         });
 
-        $('#user_permissions').select2();
+        $('#user_permissions').select2({
+            placeholder: "Select Permission"
+        });
+
+        $('#user_permissions').on('change', function(e) {
+            $('#user_permissions-error').text('')
+        });
     });
 </script>
 @include('admin.layout.end')
