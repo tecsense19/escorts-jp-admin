@@ -40,11 +40,14 @@ class HomeController extends BaseController
             }
 
             /* Get credentials from .env */
+            // TWILIO_SID="AC4c8d2f22925f9e7c53e09a846be50e9c"
+            // TWILIO_AUTH_TOKEN="5b60ef4d019e532297025a96ffb4b8e3"
+            // TWILIO_VERIFY_SID="VA9006370149b9e0010144e9f01e4d5814"
             // $token = getenv("TWILIO_AUTH_TOKEN");
             // $twilio_sid = getenv("TWILIO_SID");
             // $twilio_verify_sid = getenv("TWILIO_VERIFY_SID");
             // $twilio = new Client($twilio_sid, $token);
-            // $verification = $twilio->verify->v2->services($twilio_verify_sid)->verifications->create($input['mobile_no'], "sms");
+            // $verification = $twilio->verify->v2->services($twilio_verify_sid)->verifications->create('+919865321470', "sms");
             // echo "<pre>";
             // print_r($verification);
             // die;

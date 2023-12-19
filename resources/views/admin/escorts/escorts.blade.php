@@ -94,6 +94,10 @@
                         }
                     });
                 }
+                else
+                {
+                    escortsProfileList();
+                }
             });
         });
     });

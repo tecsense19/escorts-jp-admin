@@ -149,105 +149,103 @@
 @include('admin.layout.footer')
 <script>
     var escort_id = "{{ $getUserDetails->id }}";
-    $(document).ready(function () {
-        $( document ).ready(function() 
-        {
-            bookingList();
+    $( document ).ready(function() 
+    {
+        bookingList();
 
-            $('body').on('click', '.pagination a', function(e) {
-                e.preventDefault();
+        $('body').on('click', '.pagination a', function(e) {
+            e.preventDefault();
 
-                var url = $(this).attr('href');
-                getPerPageBookingList(url);
-            });
-
-            $('body').on('keyup', '#search', function (e) {
-                bookingList();
-            });
-            
-            $('body').on('change', '#booking_type', function (e) {
-                bookingList();
-            });
-
-            $('body').on('click', '#clear-button', function(e) {
-                $('#search').val('');
-                $("#booking_type").val("all").change();
-                bookingList();
-            });
+            var url = $(this).attr('href');
+            getPerPageBookingList(url);
         });
 
-        function bookingList()
-        {
-            var search = $('#search').val();
-            var booking_type = $('#booking_type').val();
-            $.ajax({
-                type:'post',
-                headers: {'X-CSRF-TOKEN': jQuery('input[name=_token]').val()},
-                url:'{{ route("admin.escort.wise.booking.list") }}',
-                data: { search: search, escort_id: escort_id, booking_type: booking_type },
-                success:function(data)
-                {
-                    $('.bookingDataList').html(data);
-                }
-            });
-        }
+        $('body').on('keyup', '#search', function (e) {
+            bookingList();
+        });
+        
+        $('body').on('change', '#booking_type', function (e) {
+            bookingList();
+        });
 
-        function getPerPageBookingList(get_pagination_url) 
-        {
-            var search = $('#search').val();
-            var booking_type = $('#booking_type').val();
-            $.ajax({
-                type:'post',
-                headers: {'X-CSRF-TOKEN': jQuery('input[name=_token]').val()},
-                url:get_pagination_url,
-                data: { search: search, escort_id: escort_id, booking_type: booking_type },
-                success:function(data)
-                {
-                    $('.bookingDataList').html(data);
-                }
-            });   
-        }
-
-        function deleteBooking(booking_id)
-        {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "Delete this booking.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                confirmButtonColor: '#fe7d22',
-                cancelButtonText: 'No',
-                cancelButtonColor: '#d33',
-                allowOutsideClick: false,
-                allowEscapeKey: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type:'post',
-                        headers: {'X-CSRF-TOKEN': jQuery('input[name=_token]').val()},
-                        url:'{{ route("admin.booking.delete") }}',
-                        data: { booking_id: booking_id },
-                        success:function(response)
-                        {
-                            Swal.fire({
-                                title: 'Success',
-                                text: response.message,
-                                icon: 'success',
-                                confirmButtonColor: '#fe7d22',
-                                confirmButtonText: 'OK',
-                                allowOutsideClick: false,
-                                allowEscapeKey: false
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    bookingList();
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-        }
+        $('body').on('click', '#clear-button', function(e) {
+            $('#search').val('');
+            $("#booking_type").val("all").change();
+            bookingList();
+        });
     });
+
+    function bookingList()
+    {
+        var search = $('#search').val();
+        var booking_type = $('#booking_type').val();
+        $.ajax({
+            type:'post',
+            headers: {'X-CSRF-TOKEN': jQuery('input[name=_token]').val()},
+            url:'{{ route("admin.escort.wise.booking.list") }}',
+            data: { search: search, escort_id: escort_id, booking_type: booking_type },
+            success:function(data)
+            {
+                $('.bookingDataList').html(data);
+            }
+        });
+    }
+
+    function getPerPageBookingList(get_pagination_url) 
+    {
+        var search = $('#search').val();
+        var booking_type = $('#booking_type').val();
+        $.ajax({
+            type:'post',
+            headers: {'X-CSRF-TOKEN': jQuery('input[name=_token]').val()},
+            url:get_pagination_url,
+            data: { search: search, escort_id: escort_id, booking_type: booking_type },
+            success:function(data)
+            {
+                $('.bookingDataList').html(data);
+            }
+        });   
+    }
+
+    function deleteBooking(booking_id)
+    {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Delete this booking.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            confirmButtonColor: '#fe7d22',
+            cancelButtonText: 'No',
+            cancelButtonColor: '#d33',
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type:'post',
+                    headers: {'X-CSRF-TOKEN': jQuery('input[name=_token]').val()},
+                    url:'{{ route("admin.booking.delete") }}',
+                    data: { booking_id: booking_id },
+                    success:function(response)
+                    {
+                        Swal.fire({
+                            title: 'Success',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonColor: '#fe7d22',
+                            confirmButtonText: 'OK',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                bookingList();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
 </script>
 @include('admin.layout.end')
