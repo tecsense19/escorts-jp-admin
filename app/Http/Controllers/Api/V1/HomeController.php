@@ -25,6 +25,23 @@ use Twilio\Rest\Client;
 
 class HomeController extends BaseController
 {
+    private $token;
+    private $twilio_sid;
+    private $twilio_verify_sid;
+    private $twilio;
+
+    /**
+     * Constructor method
+     */
+    public function __construct()
+    {
+        // Initialize private variable in the constructor
+        $this->token = getenv("TWILIO_AUTH_TOKEN");
+        $this->twilio_sid = getenv("TWILIO_SID");
+        $this->twilio_verify_sid = getenv("TWILIO_VERIFY_SID");
+        $this->twilio = new Client($this->twilio_sid, $this->token);
+    }
+
     public function sentOtp(Request $request)
     {
         try {
@@ -39,41 +56,36 @@ class HomeController extends BaseController
                 return $this->sendError($validator->errors()->first());
             }
 
-            /* Get credentials from .env */
-            // TWILIO_SID="AC4c8d2f22925f9e7c53e09a846be50e9c"
-            // TWILIO_AUTH_TOKEN="5b60ef4d019e532297025a96ffb4b8e3"
-            // TWILIO_VERIFY_SID="VA9006370149b9e0010144e9f01e4d5814"
-            // $token = getenv("TWILIO_AUTH_TOKEN");
-            // $twilio_sid = getenv("TWILIO_SID");
-            // $twilio_verify_sid = getenv("TWILIO_VERIFY_SID");
-            // $twilio = new Client($twilio_sid, $token);
-            // $verification = $twilio->verify->v2->services($twilio_verify_sid)->verifications->create('+919865321470', "sms");
-            // echo "<pre>";
-            // print_r($verification);
-            // die;
+            $verification = $this->twilio->verify->v2->services($this->twilio_verify_sid)->verifications->create($input['phone_code'] . $input['mobile_no'], "sms");
 
-            $userArr = [];
-            $userArr['phone_code'] = $input['phone_code'];
-            $userArr['mobile_no'] = $input['mobile_no'];
-            $userArr['user_role'] = 'client';
-            $userArr['mobile_otp'] = 123456;
-
-            $checkUser = User::where('mobile_no', $input['mobile_no'])->first();
-            $lastId = $input['mobile_no'];
-            if($checkUser)
+            if($verification->status == 'pending')
             {
-                $userArr['user_role'] = $checkUser ? $checkUser->user_role : 'client' ;
-                User::where('mobile_no', $input['mobile_no'])->update($userArr);
+                $userArr = [];
+                $userArr['phone_code'] = $input['phone_code'];
+                $userArr['mobile_no'] = $input['mobile_no'];
+                $userArr['user_role'] = 'client';
+                $userArr['mobile_otp'] = 123456;
+
+                $checkUser = User::where('mobile_no', $input['mobile_no'])->first();
+                $lastId = $input['mobile_no'];
+                if($checkUser)
+                {
+                    $userArr['user_role'] = $checkUser ? $checkUser->user_role : 'client' ;
+                    User::where('mobile_no', $input['mobile_no'])->update($userArr);
+                }
+                else
+                {
+                    User::create($userArr);
+                }
+                
+                $userDetails = User::where('mobile_no', $input['mobile_no'])->first();
+                
+                return $this->sendResponse($userDetails, 'OTP sent successfully.');
             }
             else
             {
-                User::create($userArr);
+                return $this->sendError($verification->message);
             }
-
-            $userDetails = User::where('mobile_no', $input['mobile_no'])->first();
-
-            return $this->sendResponse($userDetails, 'OTP sent successfully.');
-
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
         }
@@ -94,11 +106,20 @@ class HomeController extends BaseController
                 return $this->sendError($validator->errors()->first());
             }
 
-            $userDetails = User::where('mobile_no', $input['mobile_no'])->where('mobile_otp', $input['mobile_otp'])->first();
-            if($userDetails)
+            $verification_check = $this->twilio->verify->v2->services($this->twilio_verify_sid)->verificationChecks->create(["to" => $input['phone_code'] . $input['mobile_no'],"code" => $input['mobile_otp']]);
+            
+            if($verification_check->status == 'approved')
             {
-                User::where('id', $userDetails->id)->update(['mobile_otp' => '']);
-                return $this->sendResponse($userDetails, 'Login successfully.');
+                $userDetails = User::where('mobile_no', $input['mobile_no'])->first();
+                if($userDetails)
+                {
+                    User::where('id', $userDetails->id)->update(['mobile_otp' => '']);
+                    return $this->sendResponse($userDetails, 'Login successfully.');
+                }
+                else
+                {
+                    return $this->sendError('Invalid OTP.');
+                }
             }
             else
             {
