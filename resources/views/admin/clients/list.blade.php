@@ -16,7 +16,7 @@
                 @endphp
                 <tr>
                     <th scope="row">{{ ($key + 1)  }}</th>
-                    <td>{{ $client->mobile_no }}</td>
+                    <td>{{ $client->phone_code }} {{ $client->mobile_no }}</td>
                     <td>
                         <div><span class="badge border-danger border-1 text-danger">Past Booking: </span><span class="badge bg-danger">{{ $client->past_booking }}</span></div>
                         <div><span class="badge border-success border-1 text-success">UpComing Booking: </span><span class="badge bg-success">{{ $client->upcoming_booking }}</span></div>

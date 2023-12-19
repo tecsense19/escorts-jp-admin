@@ -1,84 +1,177 @@
 <!-- ======= Sidebar ======= -->
+@php
+$getPermission = Auth::user()->user_permissions ? explode(",", Auth::user()->user_permissions) : [];
+@endphp
 <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
-        <li class="nav-item">
-            <a class="nav-link {{ request()->is('dashboard') ? '' : 'collapsed' }}" href="{{ route('admin.dashboard') }}">
-            <i class="bi bi-grid"></i>
-            <span>Dashboard</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ request()->is('escorts/create') || request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') || request()->is('escorts/view/*') ? '' : 'collapsed' }} " data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#" aria-expanded="{{ request()->is('escorts/create') || request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') || request()->is('escorts/view/*') ? 'true' : 'false' }}">
-            <i class="bi bi-person"></i><span>Escorts</span><i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="tables-nav" class="nav-content collapse {{ request()->is('escorts/create') || request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') || request()->is('escorts/view/*') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="{{ route('admin.show.escorts') }}" class="{{ request()->is('escorts') ||request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/view/*') ? 'active' : '' }}">
-                    <i class="bi bi-circle"></i><span>All Escorts</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.create.escorts') }}" class="{{ request()->is('escorts/create') || request()->is('escorts/edit/*') ? 'active' : '' }}">
-                    <i class="bi bi-circle"></i><span>New Escorts</span>
-                    </a>
-                </li>
-            </ul>
-        </li>
-       
-        <li class="nav-item">
-            <a class="nav-link {{ request()->is('bookings') ? '' : 'collapsed' }}" href="{{ route('admin.booking') }}">
-            <i class="bi bi-bag"></i>
-                <span>Bookings</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ request()->is('clients') ? '' : 'collapsed' }}" href="{{ route('admin.clients') }}">
-            <i class="bi bi-person"></i>
-                <span>Clients</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ request()->is('language') ? '' : 'collapsed' }}" href="{{ route('admin.language') }}">
-            <i class="bi bi-translate"></i>
-                <span>All String</span>
-            </a>
-        </li>
+        @if(count($getPermission) == 0)
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('dashboard') ? '' : 'collapsed' }}" href="{{ route('admin.dashboard') }}">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('escorts/create') || request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') || request()->is('escorts/view/*') ? '' : 'collapsed' }} " data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#" aria-expanded="{{ request()->is('escorts/create') || request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') || request()->is('escorts/view/*') ? 'true' : 'false' }}">
+                <i class="bi bi-person"></i><span>Escorts</span><i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="tables-nav" class="nav-content collapse {{ request()->is('escorts/create') || request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') || request()->is('escorts/view/*') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="{{ route('admin.show.escorts') }}" class="{{ request()->is('escorts') ||request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/view/*') ? 'active' : '' }}">
+                        <i class="bi bi-circle"></i><span>All Escorts</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.create.escorts') }}" class="{{ request()->is('escorts/create') || request()->is('escorts/edit/*') ? 'active' : '' }}">
+                        <i class="bi bi-circle"></i><span>New Escorts</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('bookings') ? '' : 'collapsed' }}" href="{{ route('admin.booking') }}">
+                <i class="bi bi-bag"></i>
+                    <span>Bookings</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('clients') ? '' : 'collapsed' }}" href="{{ route('admin.clients') }}">
+                <i class="bi bi-person"></i>
+                    <span>Clients</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('language') ? '' : 'collapsed' }}" href="{{ route('admin.language') }}">
+                <i class="bi bi-translate"></i>
+                    <span>All String</span>
+                </a>
+            </li>
 
-        <li class="nav-item">
-            <a class="nav-link" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#" aria-expanded="{{ request()->is('settings/privacy') || request()->is('settings/terms') ? 'true' : 'false' }}">
-            <i class="bi bi-gear"></i><span>Settings</span><i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="components-nav" class="nav-content collapse {{ request()->is('settings/privacy')|| request()->is('settings/terms')? 'show' : '' }}" data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="{{ route ('admin.settings.privacypolicy')}}" class="{{ request()->is('settings/privacy')? 'active' : ''}}">
-                    <i class="bi bi-circle"></i><span>Privacy Policy</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.settings.termcondition') }}" class="{{ request()->is('settings/terms')? 'active' : ''}}">
-                    <i class="bi bi-circle"></i><span>Terms Conditions</span>
-                    </a>
-                </li>
-            </ul>
-        </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('settings/privacy')|| request()->is('settings/terms') ? '' : 'collapsed' }}" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#" aria-expanded="{{ request()->is('settings/privacy') || request()->is('settings/terms') ? 'true' : 'false' }}">
+                <i class="bi bi-gear"></i><span>Settings</span><i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="components-nav" class="nav-content collapse {{ request()->is('settings/privacy')|| request()->is('settings/terms') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="{{ route ('admin.settings.privacypolicy')}}" class="{{ request()->is('settings/privacy')? 'active' : ''}}">
+                        <i class="bi bi-circle"></i><span>Privacy Policy</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.settings.termcondition') }}" class="{{ request()->is('settings/terms')? 'active' : ''}}">
+                        <i class="bi bi-circle"></i><span>Terms Conditions</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
-        <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-            <i class="bi bi-person"></i><span>Sub Admin</span><i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="forms-elements.html">
-                    <i class="bi bi-circle"></i><span>List</span>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('subadmin') || request()->is('subadmin/add') || request()->is('subadmin/edit') ? '' : 'collapsed' }} " data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#" aria-expanded="{{ request()->is('subadmin') || request()->is('subadmin/add') || request()->is('subadmin/edit') ? 'true' : 'false' }}">
+                <i class="bi bi-person"></i><span>Sub Admin</span><i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="forms-nav" class="nav-content collapse {{ request()->is('subadmin') ||  request()->is('subadmin/add') || request()->is('subadmin/edit') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="{{ route('admin.subadmin') }}" class="{{ request()->is('subadmin')? 'active' : ''}}">
+                        <i class="bi bi-circle"></i><span>List</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.subadmin.add') }}" class="{{ request()->is('subadmin/add') || request()->is('subadmin/edit') ? 'active' : ''}}">
+                        <i class="bi bi-circle"></i><span>Add</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        @else
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('dashboard') ? '' : 'collapsed' }}" href="{{ route('admin.dashboard') }}">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+                </a>
+            </li>
+            @if(in_array('escorts', $getPermission))
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('escorts/create') || request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') || request()->is('escorts/view/*') ? '' : 'collapsed' }} " data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#" aria-expanded="{{ request()->is('escorts/create') || request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') || request()->is('escorts/view/*') ? 'true' : 'false' }}">
+                    <i class="bi bi-person"></i><span>Escorts</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="tables-nav" class="nav-content collapse {{ request()->is('escorts/create') || request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') || request()->is('escorts/view/*') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="{{ route('admin.show.escorts') }}" class="{{ request()->is('escorts') ||request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/view/*') ? 'active' : '' }}">
+                            <i class="bi bi-circle"></i><span>All Escorts</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.create.escorts') }}" class="{{ request()->is('escorts/create') || request()->is('escorts/edit/*') ? 'active' : '' }}">
+                            <i class="bi bi-circle"></i><span>New Escorts</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+            @if(in_array('booking', $getPermission))
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('bookings') ? '' : 'collapsed' }}" href="{{ route('admin.booking') }}">
+                    <i class="bi bi-bag"></i>
+                        <span>Bookings</span>
                     </a>
                 </li>
-                <li>
-                    <a href="forms-layouts.html">
-                    <i class="bi bi-circle"></i><span>Add</span>
+            @endif
+            @if(in_array('client', $getPermission))
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('clients') ? '' : 'collapsed' }}" href="{{ route('admin.clients') }}">
+                    <i class="bi bi-person"></i>
+                        <span>Clients</span>
                     </a>
                 </li>
-            </ul>
-        </li>
+            @endif
+            @if(in_array('allstring', $getPermission))
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('language') ? '' : 'collapsed' }}" href="{{ route('admin.language') }}">
+                    <i class="bi bi-translate"></i>
+                        <span>All String</span>
+                    </a>
+                </li>
+            @endif
+            @if(in_array('setting', $getPermission))
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('settings/privacy')|| request()->is('settings/terms') ? '' : 'collapsed' }}" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#" aria-expanded="{{ request()->is('settings/privacy') || request()->is('settings/terms') ? 'true' : 'false' }}">
+                    <i class="bi bi-gear"></i><span>Settings</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="components-nav" class="nav-content collapse {{ request()->is('settings/privacy')|| request()->is('settings/terms') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="{{ route ('admin.settings.privacypolicy')}}" class="{{ request()->is('settings/privacy')? 'active' : ''}}">
+                            <i class="bi bi-circle"></i><span>Privacy Policy</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.settings.termcondition') }}" class="{{ request()->is('settings/terms')? 'active' : ''}}">
+                            <i class="bi bi-circle"></i><span>Terms Conditions</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+            @if(in_array('subadmin', $getPermission))
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('subadmin') || request()->is('subadmin/add') || request()->is('subadmin/edit') ? '' : 'collapsed' }} " data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#" aria-expanded="{{ request()->is('subadmin') || request()->is('subadmin/add') || request()->is('subadmin/edit') ? 'true' : 'false' }}">
+                    <i class="bi bi-person"></i><span>Sub Admin</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="forms-nav" class="nav-content collapse {{ request()->is('subadmin') ||  request()->is('subadmin/add') || request()->is('subadmin/edit') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="{{ route('admin.subadmin') }}" class="{{ request()->is('subadmin')? 'active' : ''}}">
+                            <i class="bi bi-circle"></i><span>List</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.subadmin.add') }}" class="{{ request()->is('subadmin/add') || request()->is('subadmin/edit') ? 'active' : ''}}">
+                            <i class="bi bi-circle"></i><span>Add</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+        @endif
 
        
         <!-- End Dashboard Nav -->

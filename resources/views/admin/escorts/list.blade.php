@@ -35,7 +35,7 @@
                     </td>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
-                    <td>{{ $user->mobile_no }}</td>
+                    <td>{{ $user->phone_code }} {{ $user->mobile_no }}</td>
                     <td>{{ $user->age }}</td>
                     <td>
                         <div>

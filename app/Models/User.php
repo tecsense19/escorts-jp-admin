@@ -34,7 +34,8 @@ class User extends Authenticatable
         'hourly_price',
         'mobile_otp',
         'phone_code',
-        'ward'
+        'ward',
+        'user_permissions'
     ];
 
     /**

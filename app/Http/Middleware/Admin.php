@@ -15,7 +15,7 @@ class Admin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(isset(auth()->user()->user_role) && auth()->user()->user_role == 'admin'){
+        if(isset(auth()->user()->user_role) && auth()->user()->user_role == 'admin' || auth()->user()->user_role == 'subadmin'){
             return $next($request);
         }
         return redirect('/')->with('error','You have not admin access. Please login as admin.');

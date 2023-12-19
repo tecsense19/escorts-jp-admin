@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\ClientsController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\SubAdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,6 +75,13 @@ Route::group(['middleware' => ['admin']], function () {
 
     Route::get('/settings/terms', [SettingsController::class, 'termindex'])->name('admin.settings.termcondition');
     Route::Post('/settings/terms/save', [SettingsController::class, 'saveterm'])->name('admin.save.termcondition');
+
+    Route::get('/subadmin', [SubAdminController::class, 'index'])->name('admin.subadmin');
+    Route::get('/subadmin/add', [SubAdminController::class, 'create'])->name('admin.subadmin.add');
+    Route::post('/subadmin/store', [SubAdminController::class, 'store'])->name('admin.subadmin.store');
+    Route::post('/subadmin/list', [SubAdminController::class, 'list'])->name('admin.subadmin.list');
+    Route::post('/subadmin/delete', [SubAdminController::class, 'delete'])->name('admin.subadmin.delete');
+    Route::get('/subadmin/edit/{user_id}', [SubAdminController::class, 'edit'])->name('admin.subadmin.edit');
 
 });
 

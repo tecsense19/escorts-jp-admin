@@ -55,6 +55,10 @@
                                 <div class="col-lg-8 col-md-8">{{ ucfirst($getUserDetails->user_role) }}</div>
                             </div>
                             <div class="row">
+                                <div class="col-lg-4 col-md-4 label">Ward:</div>
+                                <div class="col-lg-8 col-md-8">{{ $getUserDetails->ward }}</div>
+                            </div>
+                            <!-- <div class="row">
                                 <div class="col-lg-4 col-md-4 label">Country:</div>
                                 <div class="col-lg-8 col-md-8">{{ $getUserDetails->country_name }}</div>
                             </div>
@@ -65,14 +69,14 @@
                             <div class="row">
                                 <div class="col-lg-4 col-md-4 label">City:</div>
                                 <div class="col-lg-8 col-md-8">{{ $getUserDetails->city_name }}</div>
-                            </div>
+                            </div> -->
                             <!-- <div class="row">
                                 <div class="col-lg-4 col-md-4 label">Address:</div>
                                 <div class="col-lg-8 col-md-8">{{ $getUserDetails->address }}</div>
                             </div> -->
                             <div class="row">
                                 <div class="col-lg-4 col-md-4 label">Whatsapp No.:</div>
-                                <div class="col-lg-8 col-md-8">{{ $getUserDetails->mobile_no }}</div>
+                                <div class="col-lg-8 col-md-8">{{ $getUserDetails->phone_code }} {{ $getUserDetails->mobile_no }}</div>
                             </div>
                             <div class="row">
                                 <div class="col-lg-4 col-md-4 label">Line No.:</div>
