@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class Admin
@@ -18,6 +19,7 @@ class Admin
         if(isset(auth()->user()->user_role) && auth()->user()->user_role == 'admin' || auth()->user()->user_role == 'subadmin'){
             return $next($request);
         }
-        return redirect('/')->with('error','You have not admin access. Please login as admin.');
+        Auth::logout();
+        return redirect()->route('admin.login')->with('error','You have not admin access. Please login as admin.');
     }
 }
