@@ -67,6 +67,12 @@ class EscortsController extends BaseController
             $userData['hourly_price'] = isset($input['hourly_price']) ? $input['hourly_price'] : '';
             $userData['ward'] = isset($input['ward']) ? $input['ward'] : '';
 
+            if(isset($input['latitude']) && isset($input['longitude']))
+            {
+                $userData['latitude'] = $input['latitude'];
+                $userData['longitude'] = $input['longitude'];
+            }
+
             $userId = '';
             $message = '';
             if($input['user_id'])

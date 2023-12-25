@@ -113,7 +113,18 @@ class HomeController extends BaseController
                 $userDetails = User::where('mobile_no', $input['mobile_no'])->first();
                 if($userDetails)
                 {
-                    User::where('id', $userDetails->id)->update(['mobile_otp' => '']);
+                    $updateData = [];
+                    
+                    if(isset($input['latitude']) && isset($input['longitude']))
+                    {
+                        $updateData['latitude'] = $input['latitude'];
+                        $updateData['longitude'] = $input['longitude'];
+                    }
+
+                    $updateData['device_token'] = isset($input['device_token']) ? $input['device_token'] : '';
+                    $updateData['mobile_otp'] = '';
+
+                    User::where('id', $userDetails->id)->update($updateData);
                     return $this->sendResponse($userDetails, 'Login successfully.');
                 }
                 else
@@ -595,6 +606,35 @@ class HomeController extends BaseController
             {
                 return $this->sendError('Invalid user old mobile no.');
             }
+
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    function updateLocation(Request $request)
+    {
+        try {
+
+            $input = $request->all();
+
+            $validator = Validator::make($input, [
+                'user_id' => 'required',
+                'latitude' => 'required',
+                'longitude' => 'required',
+            ]);
+        
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->first());
+            }
+
+            $updateLocationArr = [];
+            $updateLocationArr['latitude'] = $input['latitude'];
+            $updateLocationArr['longitude'] = $input['longitude'];
+
+            User::where('id', $input['user_id'])->update($updateLocationArr);
+            
+            return $this->sendResponse($input['user_id'], 'Location updated successfully.');
 
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());

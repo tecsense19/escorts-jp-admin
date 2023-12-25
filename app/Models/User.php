@@ -37,7 +37,10 @@ class User extends Authenticatable
         'mobile_otp',
         'phone_code',
         'ward',
-        'user_permissions'
+        'user_permissions',
+        'latitude',
+        'longitude',
+        'device_token'
     ];
 
     /**

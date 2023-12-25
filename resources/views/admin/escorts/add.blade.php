@@ -558,8 +558,8 @@
                 mobile_no : {
                     required: true,
                     digits: true,
-                    minlength: 10,
-                    maxlength: 10
+                    // minlength: 10,
+                    // maxlength: 10
                 },
                 line_number : {
                     required: true,
@@ -600,8 +600,8 @@
                 mobile_no : {
                     required: 'Mobile no is required!',
                     digits: "Mobile no must contain only digits",
-                    minlength: "Mobile no must be exactly 10 digits",
-                    maxlength: "Mobile no must be exactly 10 digits"
+                    // minlength: "Mobile no must be exactly 10 digits",
+                    // maxlength: "Mobile no must be exactly 10 digits"
                 },
                 line_number : {
                     required: 'Line no is required!',
