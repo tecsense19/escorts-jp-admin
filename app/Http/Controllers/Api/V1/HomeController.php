@@ -22,6 +22,8 @@ use DB;
 use Validator;
 
 use Twilio\Rest\Client;
+use App\Services\FirebaseNotification;
+// use App\Notifications\FirebaseNotification;
 
 class HomeController extends BaseController
 {
@@ -413,6 +415,36 @@ class HomeController extends BaseController
                             BookingSlot::create($bookSlot);
                         }
                     }
+
+                    $EscortFcmToken = User::where('id', $input['escort_id'])->whereNotNull('device_token')->pluck('device_token')->all();
+                    $UserFcmToken = User::where('id', $input['user_id'])->whereNotNull('device_token')->pluck('device_token')->all();
+        
+                    $escortData = [
+                        "registration_ids" => $EscortFcmToken,
+                        "notification" => [
+                            "title" => 'Escort JP',
+                            "body" => 'Hello ' . $checkEscorts->name . ' New booking received.',  
+                        ]
+                    ];
+
+                    $userData = [
+                        "registration_ids" => $UserFcmToken,
+                        "notification" => [
+                            "title" => 'Escort JP',
+                            "body" => 'Hello ' . $checkEscorts->name . ' Your booking has been confirm.',  
+                        ]
+                    ];
+
+                    $escortEncodedData = json_encode($escortData);
+                    $userEncodedData = json_encode($userData);
+
+                    FirebaseNotification::sendFirebaseNotification($escortEncodedData);
+                    FirebaseNotification::sendFirebaseNotification($userEncodedData);
+
+                    // if($apiResponse && $apiResponse->success)
+                    // {
+
+                    // }
         
                     return $this->sendResponse($lastBooking, 'Escorts booking confirmed successfully.');
                 }
@@ -635,6 +667,33 @@ class HomeController extends BaseController
             User::where('id', $input['user_id'])->update($updateLocationArr);
             
             return $this->sendResponse($input['user_id'], 'Location updated successfully.');
+
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    function updateDeviceToken(Request $request)
+    {
+        try {
+
+            $input = $request->all();
+
+            $validator = Validator::make($input, [
+                'user_id' => 'required',
+                'device_token' => 'required'
+            ]);
+        
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->first());
+            }
+
+            $updateTokenArr = [];
+            $updateTokenArr['device_token'] = $input['device_token'];
+
+            User::where('id', $input['user_id'])->update($updateTokenArr);
+            
+            return $this->sendResponse($input['user_id'], 'Device token updated successfully.');
 
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
