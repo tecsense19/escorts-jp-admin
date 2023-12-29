@@ -52,4 +52,6 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('/user/update/profile', [HomeController::class, 'updateProfile']);
     Route::post('/user/update/location', [HomeController::class, 'updateLocation']);
     Route::post('/user/update/device/token', [HomeController::class, 'updateDeviceToken']);
+
+    Route::post('/test/notification', [HomeController::class, 'testNotification']);
 });

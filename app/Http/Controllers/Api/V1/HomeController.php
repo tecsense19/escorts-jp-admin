@@ -431,15 +431,21 @@ class HomeController extends BaseController
                         "registration_ids" => $UserFcmToken,
                         "notification" => [
                             "title" => 'Escort JP',
-                            "body" => 'Hello ' . $checkEscorts->name . ' Your booking has been confirm.',  
+                            "body" => 'Hello ' . $checkUser->name . ' Your booking has been confirm.',  
                         ]
                     ];
 
                     $escortEncodedData = json_encode($escortData);
                     $userEncodedData = json_encode($userData);
 
-                    FirebaseNotification::sendFirebaseNotification($escortEncodedData);
-                    FirebaseNotification::sendFirebaseNotification($userEncodedData);
+                    if(count($EscortFcmToken) > 0)
+                    {
+                        FirebaseNotification::sendFirebaseNotification($escortEncodedData);
+                    }
+                    if(count($UserFcmToken) > 0)
+                    {
+                        FirebaseNotification::sendFirebaseNotification($userEncodedData);
+                    }
 
                     // if($apiResponse && $apiResponse->success)
                     // {
@@ -694,6 +700,49 @@ class HomeController extends BaseController
             User::where('id', $input['user_id'])->update($updateTokenArr);
             
             return $this->sendResponse($input['user_id'], 'Device token updated successfully.');
+
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    public function testNotification(Request $request)
+    {
+        try {
+            $input = $request->all();
+            $response = [];
+
+            if(isset($input['escort_fcm_token']))
+            {
+                $escortData = [
+                    "registration_ids" => [$input['escort_fcm_token']],
+                    "notification" => [
+                        "title" => 'Escort JP',
+                        "body" => 'Hello test user New booking received.',  
+                    ]
+                ];
+
+                $escortEncodedData = json_encode($escortData);
+
+                $response[] = FirebaseNotification::sendFirebaseNotification($escortEncodedData);
+            }
+
+            if(isset($input['user_fcm_token']))
+            {
+                $userData = [
+                    "registration_ids" => [$input['user_fcm_token']],
+                    "notification" => [
+                        "title" => 'Escort JP',
+                        "body" => 'Hello test user Your booking has been confirm.',  
+                    ]
+                ];
+
+                $userEncodedData = json_encode($userData);
+                    
+                $response[] = FirebaseNotification::sendFirebaseNotification($userEncodedData);
+            }
+
+            return $this->sendResponse($response, 'Test notification send successfully.');
 
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
