@@ -420,7 +420,7 @@ class HomeController extends BaseController
                     $UserFcmToken = User::where('id', $input['user_id'])->whereNotNull('device_token')->pluck('device_token')->all();
         
                     $escortData = [
-                        "registration_ids" => $EscortFcmToken,
+                        "registration_ids" => [$checkEscorts->device_token],
                         "notification" => [
                             "title" => 'Escort JP',
                             "body" => 'Hello ' . $checkEscorts->name . ' New booking received.',  
@@ -428,7 +428,7 @@ class HomeController extends BaseController
                     ];
 
                     $userData = [
-                        "registration_ids" => $UserFcmToken,
+                        "registration_ids" => [$checkUser->device_token],
                         "notification" => [
                             "title" => 'Escort JP',
                             "body" => 'Hello ' . $checkUser->name . ' Your booking has been confirm.',  
@@ -438,13 +438,14 @@ class HomeController extends BaseController
                     $escortEncodedData = json_encode($escortData);
                     $userEncodedData = json_encode($userData);
 
+                    $response = [];
                     if(count($EscortFcmToken) > 0)
                     {
-                        FirebaseNotification::sendFirebaseNotification($escortEncodedData);
+                        $response[] = FirebaseNotification::sendFirebaseNotification($escortEncodedData);
                     }
                     if(count($UserFcmToken) > 0)
                     {
-                        FirebaseNotification::sendFirebaseNotification($userEncodedData);
+                        $response[] = FirebaseNotification::sendFirebaseNotification($userEncodedData);
                     }
 
                     // if($apiResponse && $apiResponse->success)
