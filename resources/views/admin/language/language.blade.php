@@ -28,7 +28,7 @@
                                 
                             </div>
                         </div>
-                        <div class="tab-content pt-2 languageDataList">
+                        <div class="tab-content pt-2 table-responsive languageDataList">
                             
                         </div>
                         <!-- End Bordered Tabs -->

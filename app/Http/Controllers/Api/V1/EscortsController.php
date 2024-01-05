@@ -66,6 +66,7 @@ class EscortsController extends BaseController
             $userData['email'] = isset($input['email']) ? $input['email'] : '';
             $userData['hourly_price'] = isset($input['hourly_price']) ? $input['hourly_price'] : '';
             $userData['ward'] = isset($input['ward']) ? $input['ward'] : '';
+            $userData['user_permissions'] = 'escort';
 
             if(isset($input['latitude']) && isset($input['longitude']))
             {
@@ -77,13 +78,20 @@ class EscortsController extends BaseController
             $message = '';
             if($input['user_id'])
             {
+                if(isset($input['web']) && $input['web'] == 'web')
+                {
+                    if($input['password'])
+                    {
+                        $userData['password'] = Hash::make($input['password']);
+                    }
+                }
                 User::where('id', $input['user_id'])->update($userData);
                 $userId = $input['user_id'];
                 $message = 'Profile updated successfully.';
             }
             else
             {
-                // $userData['password'] = Hash::make($input['password']);
+                $userData['password'] = Hash::make($input['password']);
                 $userData['user_role'] = 'escorts';
                 
                 $lastUser = User::create($userData);

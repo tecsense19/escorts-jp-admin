@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller as Controller;
 use App\Services\ApiClientService;
 
+use Auth;
 use Hash;
 use Session;
 use Config;
@@ -42,6 +43,7 @@ class EscortsController extends Controller
     {
         try {
             $input = $request->all();
+            $input['web'] = 'web';
 
             $url = config('constants.ADD_UPDATE_ESCORTS_PROFILE');
             
@@ -146,6 +148,8 @@ class EscortsController extends Controller
 
         $search = $input['search'];
 
+        $getPermission = Auth::user()->user_permissions ? explode(",", Auth::user()->user_permissions) : [];
+
         if(isset($search) && $search != '')
         {
             $escortsList = User::where('user_role', 'escorts')
@@ -157,7 +161,14 @@ class EscortsController extends Controller
         }
         else
         {
-            $escortsList = User::where('user_role', 'escorts')->paginate(15);
+            if(in_array('escort', $getPermission))
+            {
+                $escortsList = User::where('id', Auth::user()->id)->where('user_role', 'escorts')->paginate(1);
+            }
+            else
+            {
+                $escortsList = User::where('user_role', 'escorts')->paginate(15);
+            }
         }
 
         return view('admin.escorts.list', compact('escortsList'));

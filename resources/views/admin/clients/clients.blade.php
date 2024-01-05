@@ -28,7 +28,7 @@
                                 
                             </div>
                         </div>
-                        <div class="tab-content pt-2 clientDataList">
+                        <div class="tab-content pt-2 table-responsive clientDataList">
 
                         </div>
                         <!-- End Bordered Tabs -->

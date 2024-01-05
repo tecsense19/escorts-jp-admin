@@ -497,14 +497,12 @@
                                         <input name="email" type="email" class="form-control" id="email" value="{{ $email }}" placeholder="Enter Email">
                                     </div>
                                 </div>
-                                @if($user_id == '')
-                                    <!-- <div class="row mb-3">
-                                        <label for="password" class="col-md-4 col-lg-3 col-form-label">Password</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <input name="password" type="password" class="form-control" id="password" value="{{ old('password') }}">
-                                        </div>
-                                    </div> -->
-                                @endif
+                                <div class="row mb-3">
+                                    <label for="password" class="col-md-4 col-lg-3 col-form-label">Password</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <input name="password" type="password" class="form-control" id="password" value="{{ old('password') }}">
+                                    </div>
+                                </div>
                                 <div class="row mb-3">
                                     <label for="hourly_price" class="col-md-4 col-lg-3 col-form-label">Hourly Price</label>
                                     <div class="col-md-8 col-lg-9">
@@ -570,6 +568,12 @@
                 },
                 hourly_price: {
                     required: true,
+                },
+                password: {
+                    required: function(element) {
+                        // Check if the 'id' field is blank
+                        return $('#user_id').val() === '';
+                    }
                 }
             },
             messages: {
@@ -612,6 +616,9 @@
                 },
                 hourly_price: {
                     required: 'Hourly price is required!',
+                },
+                password: {
+                    required: 'Password is required!',
                 }
             },
             submitHandler: function(form) {

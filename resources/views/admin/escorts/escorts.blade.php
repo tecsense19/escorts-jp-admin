@@ -1,3 +1,6 @@
+@php
+    $getPermission = Auth::user()->user_permissions ? explode(",", Auth::user()->user_permissions) : [];
+@endphp
 @include('admin.layout.front')
 @include('admin.layout.header')
 @include('admin.layout.sidebar')
@@ -20,15 +23,17 @@
                 <div class="card">
                     <div class="card-body pt-3">
                         <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex">
-                                <input name="search" id="search" class="form-control me-2" placeholder="Search Profile"/>
-                                <button name="clear-button" id="clear-button" class="btn btn-danger">Clear</button>
-                            </div>
-                            <div>
-                                <a href="{{ route('admin.create.escorts') }}"><button name="clear-button" id="clear-button" class="btn btn-primary">Create New</button></a>
-                            </div>
+                            @if(!in_array('escort', $getPermission))
+                                <div class="d-flex">
+                                    <input name="search" id="search" class="form-control me-2" placeholder="Search Profile"/>
+                                    <button name="clear-button" id="clear-button" class="btn btn-danger">Clear</button>
+                                </div>
+                                <div>
+                                    <a href="{{ route('admin.create.escorts') }}"><button name="clear-button" id="clear-button" class="btn btn-primary">Create New</button></a>
+                                </div>
+                            @endif
                         </div>
-                        <div class="tab-content pt-2 escortsDataList">
+                        <div class="tab-content pt-2 table-responsive escortsDataList">
 
                         </div>
                         <!-- End Bordered Tabs -->
@@ -109,7 +114,7 @@
             type:'post',
             headers: {'X-CSRF-TOKEN': jQuery('input[name=_token]').val()},
             url:'{{ route("admin.escorts.list") }}',
-            data: { search: search },
+            data: { search: search ? search : '' },
             success:function(data)
             {
                 $('.escortsDataList').html(data);
@@ -124,7 +129,7 @@
             type:'post',
             headers: {'X-CSRF-TOKEN': jQuery('input[name=_token]').val()},
             url:get_pagination_url,
-            data: { search: search },
+            data: { search: search ? search : '' },
             success:function(data)
             {
                 $('.escortsDataList').html(data);

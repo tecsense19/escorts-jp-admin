@@ -90,22 +90,26 @@ $getPermission = Auth::user()->user_permissions ? explode(",", Auth::user()->use
                 <span>Dashboard</span>
                 </a>
             </li>
-            @if(in_array('escorts', $getPermission))
+            @if(in_array('escorts', $getPermission) || in_array('escort', $getPermission))
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('escorts/create') || request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') || request()->is('escorts/view/*') ? '' : 'collapsed' }} " data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#" aria-expanded="{{ request()->is('escorts/create') || request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') || request()->is('escorts/view/*') ? 'true' : 'false' }}">
                     <i class="bi bi-person"></i><span>Escorts</span><i class="bi bi-chevron-down ms-auto"></i>
                     </a>
                     <ul id="tables-nav" class="nav-content collapse {{ request()->is('escorts/create') || request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/edit/*') || request()->is('escorts/view/*') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="{{ route('admin.show.escorts') }}" class="{{ request()->is('escorts') ||request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/view/*') ? 'active' : '' }}">
-                            <i class="bi bi-circle"></i><span>All Escorts</span>
-                            </a>
-                        </li>
+                        @if(in_array('escorts', $getPermission) || in_array('escort', $getPermission))
+                            <li>
+                                <a href="{{ route('admin.show.escorts') }}" class="{{ request()->is('escorts') ||request()->is('escorts') || request()->is('calendar/event/*') || request()->is('escorts/view/*') ? 'active' : '' }}">
+                                <i class="bi bi-circle"></i><span>All Escorts</span>
+                                </a>
+                            </li>
+                        @endif
+                        @if(in_array('escorts', $getPermission))
                         <li>
                             <a href="{{ route('admin.create.escorts') }}" class="{{ request()->is('escorts/create') || request()->is('escorts/edit/*') ? 'active' : '' }}">
                             <i class="bi bi-circle"></i><span>New Escorts</span>
                             </a>
                         </li>
+                        @endif
                     </ul>
                 </li>
             @endif

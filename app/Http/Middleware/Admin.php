@@ -16,8 +16,19 @@ class Admin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(isset(auth()->user()->user_role) && auth()->user()->user_role == 'admin' || auth()->user()->user_role == 'subadmin'){
-            return $next($request);
+        if(isset(auth()->user()->user_role)){
+            if(auth()->user())
+            {
+                if(auth()->user()->user_role == 'admin' || auth()->user()->user_role == 'subadmin' || auth()->user()->user_role == 'escorts')
+                {
+                    return $next($request);
+                }
+            }
+            else
+            {
+                Auth::logout();
+                return redirect()->route('admin.login')->with('error','You have not admin access. Please login as admin.');
+            }
         }
         Auth::logout();
         return redirect()->route('admin.login')->with('error','You have not admin access. Please login as admin.');

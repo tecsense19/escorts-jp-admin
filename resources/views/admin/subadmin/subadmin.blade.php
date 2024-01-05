@@ -28,7 +28,7 @@
                                 <a href="{{ route('admin.subadmin.add') }}"><button name="clear-button" id="clear-button" class="btn btn-primary">Create New</button></a>
                             </div>
                         </div>
-                        <div class="tab-content pt-2 subAdminDataList">
+                        <div class="tab-content pt-2 table-responsive subAdminDataList">
 
                         </div>
                         <!-- End Bordered Tabs -->
