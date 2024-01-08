@@ -237,6 +237,15 @@ class EscortsController extends BaseController
                                     ->leftJoin('states as s', 's.id', 'users.state')
                                     ->leftJoin('cities as c', 'c.id', 'users.city')
                                     ->first();
+                            
+            if($getUserDetails)
+            {
+                $checkAvailable = EscortsAvailability::where('user_id', $getUserDetails->id)
+                                                    ->where('available_date', date('Y-m-d'))
+                                                    ->where('start_time', '>=', date('H:i:s'))
+                                                    ->first();
+                $getUserDetails->is_available = $checkAvailable ? 1 : 0;
+            }
 
             return $this->sendResponse($getUserDetails, 'Profile get successfully.');
         } catch (\Exception $e) {
