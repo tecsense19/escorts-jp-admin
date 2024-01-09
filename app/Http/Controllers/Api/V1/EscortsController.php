@@ -78,13 +78,13 @@ class EscortsController extends BaseController
             $message = '';
             if($input['user_id'])
             {
-                if(isset($input['web']) && $input['web'] == 'web')
-                {
-                    if($input['password'])
+                // if(isset($input['web']) && $input['web'] == 'web')
+                // {
+                    if(isset($input['password']) && $input['password'] != '')
                     {
                         $userData['password'] = Hash::make($input['password']);
                     }
-                }
+                // }
                 User::where('id', $input['user_id'])->update($userData);
                 $userId = $input['user_id'];
                 $message = 'Profile updated successfully.';
